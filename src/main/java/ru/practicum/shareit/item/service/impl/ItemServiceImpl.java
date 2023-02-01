@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemRequestDto;
@@ -71,7 +72,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemResponseDto> searchItemsByText(String text, Long userId) {
-        if (text == null || text.isEmpty()) {
+        if (StringUtils.isBlank(text)) {
             log.debug("Текст поиска пустой или равен null, возвращен пустой список");
             return Collections.emptyList();
         }
@@ -81,7 +82,7 @@ public class ItemServiceImpl implements ItemService {
             if (!item.getAvailable()) {
                 continue;
             }
-            boolean nameContains = item.getName().toLowerCase().contains(text);
+            boolean nameContains = StringUtils.containsIgnoreCase(item.getName(), text);
             boolean descriptionContains = item.getDescription().toLowerCase().contains(text);
             if (nameContains || descriptionContains) {
                 itemList.add(item);
