@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.annotation.group.ForCreate;
-import ru.practicum.shareit.annotation.group.ForUpdate;
 import ru.practicum.shareit.user.dto.UserRequestDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.validation.annotation.group.ForCreate;
+import ru.practicum.shareit.validation.annotation.group.ForUpdate;
 
 import java.util.List;
 
@@ -28,21 +28,25 @@ public class UserController {
     @PatchMapping("/{userId}")
     public UserResponseDto updateUser(@RequestBody @Validated(ForUpdate.class) UserRequestDto userRequestDto,
                                       @PathVariable Long userId) {
+        log.info("Запрос на изменение пользователя");
         return userService.updateUser(userRequestDto, userId);
     }
 
     @GetMapping("/{userId}")
     public UserResponseDto getUserById(@PathVariable Long userId) {
+        log.info("Запрос на получение пользователя по id = {}", userId);
         return userService.getUserById(userId);
     }
 
     @DeleteMapping("/{userId}")
     public void deleteUserById(@PathVariable Long userId) {
+        log.info("Удаление пользователя по id = {}", userId);
         userService.deleteUserById(userId);
     }
 
     @GetMapping
     public List<UserResponseDto> getAllUsers() {
+        log.info("Запрос на получение всех пользователей");
         return userService.getUsers();
     }
 }

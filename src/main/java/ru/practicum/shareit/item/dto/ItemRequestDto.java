@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.practicum.shareit.annotation.group.ForCreate;
+import ru.practicum.shareit.validation.annotation.group.ForCreate;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;

@@ -3,13 +3,16 @@ package ru.practicum.shareit.user.service.impl;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.dto.UserRequestDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -37,12 +40,14 @@ public class UserServiceImpl implements UserService {
         Optional.ofNullable(userRequestDto.getName()).ifPresent(user::setName);
         Optional.ofNullable(userRequestDto.getEmail()).ifPresent(user::setEmail);
         userMap.put(userId, user);
+        log.debug("Обновлен пользователь с id = {}", userId);
         return UserMapper.toUserResponseDto(user);
     }
 
     @Override
     public UserResponseDto getUserById(Long userId) {
         checkUserExistsById(userId);
+        log.debug("Получен пользователь с id = {}", userId);
         return UserMapper.toUserResponseDto(userMap.get(userId));
     }
 
@@ -50,10 +55,12 @@ public class UserServiceImpl implements UserService {
     public void deleteUserById(Long userId) {
         checkUserExistsById(userId);
         userMap.remove(userId);
+        log.debug("Удален пользователь с id = {}", userId);
     }
 
     @Override
     public List<UserResponseDto> getUsers() {
+        log.debug("Найдены все пользователи");
         return UserMapper.toUserResponseDtoList(userMap.values());
     }
 

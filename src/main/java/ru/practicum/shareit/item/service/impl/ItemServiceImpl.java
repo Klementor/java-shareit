@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemRequestDto;
@@ -14,6 +15,7 @@ import ru.practicum.shareit.user.service.UserService;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
@@ -31,6 +33,7 @@ public class ItemServiceImpl implements ItemService {
         item.setId(id);
         itemMap.put(item.getId(), item);
         id++;
+        log.debug("Добавлен новый предмет пользователем с id = {}", userId);
         return ItemMapper.toItemResponseDto(item);
     }
 
@@ -44,12 +47,14 @@ public class ItemServiceImpl implements ItemService {
         Optional.ofNullable(itemRequestDto.getDescription()).ifPresent(item::setDescription);
         Optional.ofNullable(itemRequestDto.getAvailable()).ifPresent(item::setAvailable);
         itemMap.put(itemId, item);
+        log.debug("Обновлен предмет с id = {} пользователем с id = {}", itemId, userId);
         return ItemMapper.toItemResponseDto(item);
     }
 
     @Override
     public ItemResponseDto getItemById(Long itemId, Long userId) {
         checkItemExistsById(itemId);
+        log.debug("Получен предмет с id = {} пользователем с id = {}", itemId, userId);
         return ItemMapper.toItemResponseDto(itemMap.get(itemId));
     }
 
@@ -60,12 +65,14 @@ public class ItemServiceImpl implements ItemService {
                 .stream()
                 .filter(item -> Objects.equals(item.getOwner().getId(), userId))
                 .collect(Collectors.toList());
+        log.debug("Получение всех предметов пользователя с id = {}", userId);
         return ItemMapper.fromItemListToItemResponseDtoList(items);
     }
 
     @Override
     public List<ItemResponseDto> searchItemsByText(String text, Long userId) {
         if (text == null || text.isEmpty()) {
+            log.debug("Текст поиска пустой или равен null, возвращен пустой список");
             return Collections.emptyList();
         }
         text = text.toLowerCase();
@@ -80,6 +87,7 @@ public class ItemServiceImpl implements ItemService {
                 itemList.add(item);
             }
         }
+        log.debug("Найдены все предметы с подстрокой = {}", text);
         return ItemMapper.fromItemListToItemResponseDtoList(itemList);
     }
 
