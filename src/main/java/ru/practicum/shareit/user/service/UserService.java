@@ -19,5 +19,4 @@ public interface UserService {
 
     List<UserResponseDto> getUsers();
 
-    Map<Long, User> getUserMap();
 }

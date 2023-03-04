@@ -1,80 +1,71 @@
 package ru.practicum.shareit.user.service.impl;
 
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.dto.UserRequestDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserJpaRepository;
 import ru.practicum.shareit.user.service.UserService;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
-    private Long id = 1L;
-    @Getter
-    private final Map<Long, User> userMap = new HashMap<>();
+
+    private final UserJpaRepository userJpaRepository;
 
     @Override
+    @Transactional
     public UserResponseDto addUser(UserRequestDto userRequestDto) {
-        User user = UserMapper.fromUserRequestDto(userRequestDto);
-        checkUniqueEmail(user.getEmail());
-        user.setId(id);
-        id++;
-        userMap.put(user.getId(), user);
+        User user = userJpaRepository.save(UserMapper.fromUserRequestDto(userRequestDto));
         log.debug("Пользователь с id= {} добавлен", user.getId());
         return UserMapper.toUserResponseDto(user);
     }
 
     @Override
+    @Transactional
     public UserResponseDto updateUser(UserRequestDto userRequestDto, Long userId) {
         checkUserExistsById(userId);
-        checkUniqueEmail(userRequestDto.getEmail());
-        User user = userMap.get(userId);
+        User user = userJpaRepository.getReferenceById(userId);
         Optional.ofNullable(userRequestDto.getName()).ifPresent(user::setName);
         Optional.ofNullable(userRequestDto.getEmail()).ifPresent(user::setEmail);
-        userMap.put(userId, user);
+        User updateUser = userJpaRepository.save(user);
         log.debug("Обновлен пользователь с id = {}", userId);
-        return UserMapper.toUserResponseDto(user);
+        return UserMapper.toUserResponseDto(updateUser);
     }
 
     @Override
     public UserResponseDto getUserById(Long userId) {
         checkUserExistsById(userId);
         log.debug("Получен пользователь с id = {}", userId);
-        return UserMapper.toUserResponseDto(userMap.get(userId));
+        return UserMapper.toUserResponseDto(userJpaRepository.getReferenceById(userId));
     }
 
     @Override
+    @Transactional
     public void deleteUserById(Long userId) {
         checkUserExistsById(userId);
-        userMap.remove(userId);
+        userJpaRepository.deleteById(userId);
         log.debug("Удален пользователь с id = {}", userId);
     }
 
     @Override
     public List<UserResponseDto> getUsers() {
         log.debug("Найдены все пользователи");
-        return UserMapper.toUserResponseDtoList(userMap.values());
+        return UserMapper.toUserResponseDtoList(userJpaRepository.findAll());
     }
 
     private void checkUserExistsById(Long userId) {
-        if (!userMap.containsKey(userId)) {
+        if (!userJpaRepository.existsById(userId)) {
             throw new RuntimeException("Пользователя с таким id не существует");
-        }
-    }
-
-    private void checkUniqueEmail(String email) {
-        for (User user1 : userMap.values()) {
-            if (user1.getEmail().equals(email)) {
-                throw new RuntimeException("Пользователь с данной почтой уже зарегестрирован");
-            }
         }
     }
 }
