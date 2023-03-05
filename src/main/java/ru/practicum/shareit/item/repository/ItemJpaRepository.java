@@ -15,9 +15,9 @@ public interface ItemJpaRepository extends JpaRepository<Item, Long> {
 
     @Query(value = "SELECT items " +
             "FROM Item AS items " +
-            "WHERE (Item.available = TRUE) " +
-            "AND ((CAST((:text) AS string) IS NULL) OR (LOWER(Item.name) LIKE LOWER(CONCAT('%', :text, '%')))" +
-            "OR (CAST((:text) AS string) IS NULL) OR (LOWER(Item.description) LIKE LOWER(CONCAT('%', :text, '%'))))"
-    )
+            "WHERE " +
+            "  ((items.available IS NULL) OR (items.available IS TRUE)) " +
+            "AND (((:text) IS NULL) OR (LOWER(items.name) LIKE LOWER(CONCAT('%', :text, '%')))" +
+            "OR (((:text) IS NULL) OR (LOWER(items.description) LIKE LOWER(CONCAT('%', :text, '%')))))")
     List<Item> findAllByText(@Param("text") String text);
 }

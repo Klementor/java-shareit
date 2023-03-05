@@ -7,6 +7,9 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
+import java.util.LinkedList;
+import java.util.List;
+
 @UtilityClass
 public class BookingMapper {
 
@@ -33,5 +36,13 @@ public class BookingMapper {
         bookingResponseDto.setStatus(booking.getStatus());
 
         return bookingResponseDto;
+    }
+
+    public static List<BookingResponseDto> toListBookingResponseDto(Iterable<Booking> bookingList) {
+        List<BookingResponseDto> bookingResponseDtoList = new LinkedList<>();
+        for (Booking booking : bookingList) {
+            bookingResponseDtoList.add(BookingMapper.toBookingResponseDto(booking));
+        }
+        return bookingResponseDtoList;
     }
 }

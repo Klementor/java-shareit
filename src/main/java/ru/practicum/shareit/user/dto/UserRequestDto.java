@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
 public class UserRequestDto {
     @NotNull(groups = {ForCreate.class})
     private String name;
+
     @NotNull(groups = {ForCreate.class})
     @Email(groups = {ForCreate.class, ForUpdate.class})
     private String email;
