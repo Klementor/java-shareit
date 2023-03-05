@@ -42,4 +42,11 @@ public class BookingController {
             @RequestParam(required = false, defaultValue = "ALL") String state) {
         return bookingServiceImpl.getBookingsByUserId(userId, state);
     }
+
+    @GetMapping("/owner")
+    public Iterable<BookingResponseDto> getBookingsByOwnerId(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestParam(required = false, defaultValue = "ALL") String state) {
+        return bookingServiceImpl.getBookingsByOwnerId(userId, state);
+    }
 }

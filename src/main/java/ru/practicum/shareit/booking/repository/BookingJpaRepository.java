@@ -1,11 +1,9 @@
 package ru.practicum.shareit.booking.repository;
 
-import net.bytebuddy.TypeCache;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.booking.model.Booking;
 
 import java.time.LocalDateTime;
@@ -40,4 +38,28 @@ public interface BookingJpaRepository extends JpaRepository<Booking, Long> {
             "FROM Booking AS bookings " +
             "WHERE (bookings.booker.id = (:bookerId)) AND (bookings.status = (:status))")
     List<Booking> findBookingByBookerIdAndStatus(@Param("bookerId") Long userId, @Param("status") Booking.Status status);
+
+    Iterable<Booking> findAllByItemOwnerId(Long ownerId, Sort sort);
+
+    @Query(value = "SELECT bookings " +
+            "FROM Booking AS bookings " +
+            "WHERE (bookings.item.owner.id = (:ownerId)) " +
+            "AND (bookings.start < (:time)) " +
+            "AND (bookings.end > (:time))")
+    Iterable<Booking> findCurrentBookingByOwnerId(@Param("ownerId") Long ownerId, @Param("time") LocalDateTime time);
+
+    @Query(value = "SELECT bookings " +
+            "FROM Booking AS bookings " +
+            "WHERE (bookings.item.owner.id = (:ownerId)) " +
+            "AND (bookings.end < (:time))")
+    Iterable<Booking> findPastBookingByOwnerId(@Param("ownerId") Long ownerId, @Param("time") LocalDateTime time, Sort sort);
+
+@Query(value = "SELECT bookings " +
+        "FROM Booking AS bookings " +
+        "WHERE(bookings.item.owner.id = (:ownerId) " +
+        "AND (bookings.start > (:time)))")
+    Iterable<Booking> findFutureBookingByOwnerId(Long ownerId, LocalDateTime time, Sort sort);
+
+
+    Iterable<Booking> findBookingByItemOwnerIdAndStatusEquals(Long ownerId, Booking.Status status);
 }

@@ -14,4 +14,6 @@ public interface BookingService {
     BookingResponseDto getBookingOnlyForOwnerOrBooker(Long userId, Long bookingId);
 
     List<BookingResponseDto> getBookingsByUserId(Long userId, String state);
+
+    Iterable<BookingResponseDto> getBookingsByOwnerId(Long userId, String state);
 }

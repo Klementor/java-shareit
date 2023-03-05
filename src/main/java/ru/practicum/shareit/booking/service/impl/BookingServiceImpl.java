@@ -77,11 +77,11 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponseDto getBookingOnlyForOwnerOrBooker(Long userId, Long bookingId) {
         if (!bookingJpaRepository.existsById(bookingId) || !userJpaRepository.existsById(userId)) {
-            throw new BadRequestException("Booking id или user id неверные");
+            throw new NotFoundException("Booking id или user id неверные");
         }
         Booking booking = bookingJpaRepository.getReferenceById(bookingId);
         if (!booking.getBooker().getId().equals(userId) && !booking.getItem().getOwner().getId().equals(userId)) {
-            throw new BadRequestException("Указанное user id не является id владельца или заказчика");
+            throw new NotFoundException("Указанное user id не является id владельца или заказчика");
         }
         log.info("Отправлены данные о booking с id = {}", booking.getId());
         return BookingMapper.toBookingResponseDto(booking);
@@ -114,6 +114,40 @@ public class BookingServiceImpl implements BookingService {
                 break;
             case "REJECTED":
                 bookings = bookingJpaRepository.findBookingByBookerIdAndStatus(userId, Booking.Status.REJECTED);
+                break;
+            default:
+                throw new BadRequestException(String.format("Unknown state: %s", state));
+        }
+        return BookingMapper.toListBookingResponseDto(bookings);
+    }
+
+    @Override
+    public Iterable<BookingResponseDto> getBookingsByOwnerId(Long userId, String state) {
+        if (!userJpaRepository.existsById(userId)) {
+            throw new NotFoundException("Пользователя с указанным id не существует");
+        }
+        Iterable<Booking> bookings;
+        LocalDateTime now = LocalDateTime.now();
+        switch (state) {
+            case "ALL":
+                bookings = bookingJpaRepository.findAllByItemOwnerId(userId, Sort.by("start").descending());
+                break;
+            case "CURRENT":
+                bookings = bookingJpaRepository.findCurrentBookingByOwnerId(userId, now);
+                break;
+            case "PAST":
+                bookings = bookingJpaRepository.findPastBookingByOwnerId(userId, now, Sort.by("start").descending());
+                break;
+            case "FUTURE":
+                bookings = bookingJpaRepository.findFutureBookingByOwnerId(userId,
+                        now,
+                        Sort.by("start").descending());
+                break;
+            case "WAITING":
+                bookings = bookingJpaRepository.findBookingByItemOwnerIdAndStatusEquals(userId, Booking.Status.WAITING);
+                break;
+            case "REJECTED":
+                bookings = bookingJpaRepository.findBookingByItemOwnerIdAndStatusEquals(userId, Booking.Status.REJECTED);
                 break;
             default:
                 throw new BadRequestException(String.format("Unknown state: %s", state));
