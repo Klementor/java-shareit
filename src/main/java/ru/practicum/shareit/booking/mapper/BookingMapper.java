@@ -16,7 +16,6 @@ public class BookingMapper {
     public static Booking toBooking(BookItemRequestDto bookItemRequestDto, User user, Item item) {
         Booking booking = new Booking();
 
-        booking.setId(bookItemRequestDto.getItemId());
         booking.setStart(bookItemRequestDto.getStart());
         booking.setEnd(bookItemRequestDto.getEnd());
         booking.setItem(item);

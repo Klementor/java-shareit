@@ -42,8 +42,10 @@ public class BookingServiceImpl implements BookingService {
         if (!itemJpaRepository.existsById(bookItemRequestDto.getItemId()) || !userJpaRepository.existsById(userId)) {
             throw new NotFoundException("Пользователя либо вещи не существует");
         }
-
         Item item = itemJpaRepository.getReferenceById(bookItemRequestDto.getItemId());
+        if (item.getOwner().getId().equals(userId)) {
+            throw new NotFoundException("Заказчик является владельцем");
+        }
         User user = userJpaRepository.getReferenceById(userId);
         if (!item.getAvailable()) {
             throw new BadRequestException("Вещь недоступна для бронирования");
@@ -58,11 +60,11 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponseDto updateBooking(Long userId, Long bookingId, Boolean approved) {
 
         if (!bookingJpaRepository.existsById(bookingId) || !userJpaRepository.existsById(userId)) {
-            throw new BadRequestException("Booking id или user id неверные");
+            throw new NotFoundException("Booking id или user id неверные");
         }
         Booking booking = bookingJpaRepository.getReferenceById(bookingId);
         if (!booking.getItem().getOwner().getId().equals(userId)) {
-            throw new BadRequestException("Указанный user id не является идентификатором владельца вещи");
+            throw new NotFoundException("Указанный user id не является идентификатором владельца вещи");
         }
         if (booking.getStatus() == Booking.Status.APPROVED) {
             throw new BadRequestException("Статус approved уже установлен");

@@ -1,11 +1,9 @@
 package ru.practicum.shareit.user.service;
 
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.dto.UserRequestDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 
 import java.util.List;
-import java.util.Map;
 
 public interface UserService {
 

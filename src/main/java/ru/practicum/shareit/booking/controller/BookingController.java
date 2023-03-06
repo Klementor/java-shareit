@@ -1,14 +1,10 @@
 package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.request.BookItemRequestDto;
 import ru.practicum.shareit.booking.dto.response.BookingResponseDto;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.booking.service.impl.BookingServiceImpl;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/bookings")

@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.service;
 
-import ru.practicum.shareit.item.dto.ItemRequestDto;
-import ru.practicum.shareit.item.dto.ItemResponseDto;
+import ru.practicum.shareit.item.dto.*;
 
 import java.util.List;
 
@@ -11,9 +10,11 @@ public interface ItemService {
 
     ItemResponseDto updateItem(Long itemId, ItemRequestDto itemRequestDto, Long userId);
 
-    ItemResponseDto getItemById(Long itemId, Long userId);
+    ItemWithBookingsResponseDto getItemById(Long itemId, Long userId);
 
-    List<ItemResponseDto> getUserItems(Long userId);
+    List<ItemWithBookingsResponseDto> getUserItems(Long userId);
 
     List<ItemResponseDto> searchItemsByText(String text, Long userId);
+
+    CommentResponseDto postComment(Long userId, Long itemId, CommentRequestDto commentRequestDto);
 }

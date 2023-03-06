@@ -8,6 +8,7 @@ import ru.practicum.shareit.booking.model.Booking;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface BookingJpaRepository extends JpaRepository<Booking, Long> {
 
@@ -62,4 +63,10 @@ public interface BookingJpaRepository extends JpaRepository<Booking, Long> {
 
 
     Iterable<Booking> findBookingByItemOwnerIdAndStatusEquals(Long ownerId, Booking.Status status);
+
+    Optional<Booking> findFirstByItemIdAndEndIsBeforeOrderByEndDesc(Long itemId, LocalDateTime time);
+
+    Optional<Booking> findFirstByItemIdAndStartIsAfterOrderByStart(Long itemId, LocalDateTime time);
+
+    boolean existsByBookerIdAndItemIdAndEndIsBefore(Long userId, Long itemId, LocalDateTime time);
 }
