@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.practicum.shareit.booking.model.Booking.Status.REJECTED;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -67,13 +69,18 @@ public class ItemServiceImpl implements ItemService {
         log.debug("Получен предмет с id = {} пользователем с id = {}", itemId, userId);
         Item item = itemJpaRepository.getReferenceById(itemId);
         if (item.getOwner().getId().equals(userId)) {
-            LocalDateTime time = LocalDateTime.now();
             Booking lastBooking = bookingJpaRepository
-                    .findFirstByItemIdAndEndIsBeforeOrderByEndDesc(item.getId(), time)
+                    .findFirstByItemIdAndEndIsBeforeOrderByEndDesc(item.getId(), LocalDateTime.now())
                     .orElse(null);
+            if (lastBooking != null && lastBooking.getStatus() == REJECTED) {
+                lastBooking = null;
+            }
             Booking nextBooking = bookingJpaRepository
-                    .findFirstByItemIdAndStartIsAfterOrderByStart(item.getId(), time)
+                    .findFirstByItemIdAndStartIsAfterOrderByStart(item.getId(), LocalDateTime.now())
                     .orElse(null);
+            if (nextBooking != null && nextBooking.getStatus() == REJECTED) {
+                nextBooking = null;
+            }
             return ItemMapper.toItemWithBookingsResponseDto(item,
                     lastBooking,
                     nextBooking,
