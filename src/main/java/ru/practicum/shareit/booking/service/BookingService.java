@@ -15,4 +15,13 @@ public interface BookingService {
     List<BookingResponseDto> getBookingsByUserId(Long userId, String state);
 
     Iterable<BookingResponseDto> getBookingsByOwnerId(Long userId, String state);
+
+    enum State {
+        ALL,
+        CURRENT,
+        PAST,
+        FUTURE,
+        WAITING,
+        REJECTED
+    }
 }

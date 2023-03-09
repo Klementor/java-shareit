@@ -20,6 +20,7 @@ public class ItemController {
     private final ItemService itemService;
 
     private final String header = "X-Sharer-User-Id";
+
     @PostMapping
     public ItemResponseDto createItem(@RequestBody @Validated(ForCreate.class) ItemRequestDto itemRequestDto,
                                       @RequestHeader(header) Long userId) {

@@ -171,12 +171,4 @@ public class BookingServiceImpl implements BookingService {
         }
         return BookingMapper.toListBookingResponseDto(bookings);
     }
-    enum State {
-        ALL,
-        CURRENT,
-        PAST,
-        FUTURE,
-        WAITING,
-        REJECTED
-    }
 }
