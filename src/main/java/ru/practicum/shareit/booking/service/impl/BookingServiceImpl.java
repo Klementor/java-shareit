@@ -96,29 +96,33 @@ public class BookingServiceImpl implements BookingService {
         }
         List<Booking> bookings;
         LocalDateTime now = LocalDateTime.now();
-        switch (state) {
-            case "ALL":
-                bookings = bookingJpaRepository.findAllByBookerId(userId, Sort.by("start").descending());
-                break;
-            case "CURRENT":
-                bookings = bookingJpaRepository.findCurrentBookingByBookerId(userId, now);
-                break;
-            case "PAST":
-                bookings = bookingJpaRepository.findPastBookingByBookerId(userId, now);
-                break;
-            case "FUTURE":
-                bookings = bookingJpaRepository.findFutureBookingByBookerId(userId,
-                        now,
-                        Sort.by("start").descending());
-                break;
-            case "WAITING":
-                bookings = bookingJpaRepository.findBookingByBookerIdAndStatus(userId, Booking.Status.WAITING);
-                break;
-            case "REJECTED":
-                bookings = bookingJpaRepository.findBookingByBookerIdAndStatus(userId, Booking.Status.REJECTED);
-                break;
-            default:
-                throw new BadRequestException(String.format("Unknown state: %s", state));
+        try {
+            switch (State.valueOf(state)) {
+                case ALL:
+                    bookings = bookingJpaRepository.findBookingByBookerId(userId, Sort.by("start").descending());
+                    break;
+                case CURRENT:
+                    bookings = bookingJpaRepository.findBookingByBookerIdAndStartIsBeforeAndEndIsAfter(userId, now, now);
+                    break;
+                case PAST:
+                    bookings = bookingJpaRepository.findBookingByBookerIdAndStartIsBeforeAndEndIsBefore(userId, now, now);
+                    break;
+                case FUTURE:
+                    bookings = bookingJpaRepository.findBookingByBookerIdAndStartIsAfter(userId,
+                            now,
+                            Sort.by("start").descending());
+                    break;
+                case WAITING:
+                    bookings = bookingJpaRepository.findBookingByBookerIdAndStatusEquals(userId, Booking.Status.WAITING);
+                    break;
+                case REJECTED:
+                    bookings = bookingJpaRepository.findBookingByBookerIdAndStatusEquals(userId, Booking.Status.REJECTED);
+                    break;
+                default:
+                    throw new BadRequestException(String.format("Unknown state: %s", state));
+            }
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(String.format("Unknown state: %s", state));
         }
         return BookingMapper.toListBookingResponseDto(bookings);
     }
@@ -130,30 +134,49 @@ public class BookingServiceImpl implements BookingService {
         }
         Iterable<Booking> bookings;
         LocalDateTime now = LocalDateTime.now();
-        switch (state) {
-            case "ALL":
-                bookings = bookingJpaRepository.findAllByItemOwnerId(userId, Sort.by("start").descending());
-                break;
-            case "CURRENT":
-                bookings = bookingJpaRepository.findCurrentBookingByOwnerId(userId, now);
-                break;
-            case "PAST":
-                bookings = bookingJpaRepository.findPastBookingByOwnerId(userId, now, Sort.by("start").descending());
-                break;
-            case "FUTURE":
-                bookings = bookingJpaRepository.findFutureBookingByOwnerId(userId,
-                        now,
-                        Sort.by("start").descending());
-                break;
-            case "WAITING":
-                bookings = bookingJpaRepository.findBookingByItemOwnerIdAndStatusEquals(userId, Booking.Status.WAITING);
-                break;
-            case "REJECTED":
-                bookings = bookingJpaRepository.findBookingByItemOwnerIdAndStatusEquals(userId, Booking.Status.REJECTED);
-                break;
-            default:
-                throw new BadRequestException(String.format("Unknown state: %s", state));
+        try {
+            switch (State.valueOf(state)) {
+                case ALL:
+                    bookings = bookingJpaRepository.findAllByItemOwnerId(userId, Sort.by("start").descending());
+                    break;
+                case CURRENT:
+                    bookings = bookingJpaRepository.findBookingByItemOwnerIdAndStartIsBeforeAndEndIsAfter(userId, now, now);
+                    break;
+                case PAST:
+                    bookings = bookingJpaRepository.findBookingByItemOwnerIdAndEndIsBefore(
+                            userId,
+                            now,
+                            Sort.by("start").descending());
+                    break;
+                case FUTURE:
+                    bookings = bookingJpaRepository.findBookingByItemOwnerIdAndStartIsAfter(userId,
+                            now,
+                            Sort.by("start").descending());
+                    break;
+                case WAITING:
+                    bookings = bookingJpaRepository.findBookingByItemOwnerIdAndStatusEquals(
+                            userId,
+                            Booking.Status.WAITING);
+                    break;
+                case REJECTED:
+                    bookings = bookingJpaRepository.findBookingByItemOwnerIdAndStatusEquals(
+                            userId,
+                            Booking.Status.REJECTED);
+                    break;
+                default:
+                    throw new BadRequestException(String.format("Unknown state: %s", state));
+            }
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(String.format("Unknown state: %s", state));
         }
         return BookingMapper.toListBookingResponseDto(bookings);
+    }
+    enum State {
+        ALL,
+        CURRENT,
+        PAST,
+        FUTURE,
+        WAITING,
+        REJECTED
     }
 }

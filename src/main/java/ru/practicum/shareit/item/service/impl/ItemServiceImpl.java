@@ -19,10 +19,9 @@ import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.repository.UserJpaRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.booking.model.Booking.Status.REJECTED;
 
@@ -97,21 +96,29 @@ public class ItemServiceImpl implements ItemService {
         checkUserExistsById(userId);
         log.debug("Получение всех предметов пользователя с id = {}", userId);
         List<Item> items = itemJpaRepository.findAllByOwnerId(userId);
+        List<Long> itemIds = items.stream()
+                .map(Item::getId)
+                .collect(Collectors.toList());
+        List<Booking> lastBookings = bookingJpaRepository
+                .findFirstByItemIdInAndEndIsBeforeOrderByEndDesc(itemIds, LocalDateTime.now());
+        List<Booking> nextBookings = bookingJpaRepository
+                .findFirstByItemIdInAndStartIsAfterOrderByStart(itemIds, LocalDateTime.now());
+        Map<Long, Booking> lastBookingMap = lastBookings.stream()
+                .collect(Collectors.toMap(booking -> booking.getItem().getId(), Function.identity()));
+        Map<Long, Booking> nextBookingMap = nextBookings.stream()
+                .collect(Collectors.toMap(booking -> booking.getItem().getId(), Function.identity()));
+        Map<Long, List<Comment>> commentMap = commentJpaRepository
+                .findAllByItemIdIn(itemIds)
+                .stream()
+                .collect(Collectors.groupingBy(comment -> comment.getItem().getId()));
         List<ItemWithBookingsResponseDto> itemWithBookingsResponseDtoList = new ArrayList<>();
         for (Item item : items) {
-            LocalDateTime time = LocalDateTime.now();
-            Booking lastBooking = bookingJpaRepository
-                    .findFirstByItemIdAndEndIsBeforeOrderByEndDesc(item.getId(), time)
-                    .orElse(null);
-            Booking nextBooking = bookingJpaRepository
-                    .findFirstByItemIdAndStartIsAfterOrderByStart(item.getId(), time)
-                    .orElse(null);
-            itemWithBookingsResponseDtoList
-                    .add(ItemMapper.toItemWithBookingsResponseDto(item,
-                            lastBooking,
-                            nextBooking,
-                            commentJpaRepository.findAllByItemId(item.getId())));
+            itemWithBookingsResponseDtoList.add(ItemMapper.toItemWithBookingsResponseDto(item,
+                    lastBookingMap.get(item.getId()),
+                    nextBookingMap.get(item.getId()),
+                    commentMap.getOrDefault(item.getId(), Collections.emptyList())));
         }
+
         return itemWithBookingsResponseDtoList;
     }
 
