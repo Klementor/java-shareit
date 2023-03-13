@@ -4,38 +4,47 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.dto.ItemRequestDto;
-import ru.practicum.shareit.item.dto.ItemResponseDto;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.repository.BookingJpaRepository;
+import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.CommentJpaRepository;
+import ru.practicum.shareit.item.repository.ItemJpaRepository;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
-import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.repository.UserJpaRepository;
 
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static ru.practicum.shareit.booking.model.Booking.Status.REJECTED;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    private final Map<Long, Item> itemMap = new HashMap<>();
+    private final BookingJpaRepository bookingJpaRepository;
 
-    private final UserService userService;
+    private final UserJpaRepository userJpaRepository;
 
-    private Long id = 1L;
+    private final ItemJpaRepository itemJpaRepository;
+
+    private final CommentJpaRepository commentJpaRepository;
 
     @Override
     public ItemResponseDto addItem(ItemRequestDto itemRequestDto, Long userId) {
         Item item = ItemMapper.toItem(itemRequestDto);
         checkUserExistsById(userId);
-        item.setOwner(userService.getUserMap().get(userId));
-        item.setId(id);
-        itemMap.put(item.getId(), item);
-        id++;
+        item.setOwner(userJpaRepository.getReferenceById(userId));
+
         log.debug("Добавлен новый предмет пользователем с id = {}", userId);
-        return ItemMapper.toItemResponseDto(item);
+        return ItemMapper.toItemResponseDto(itemJpaRepository.save(item));
     }
 
     @Override
@@ -43,31 +52,74 @@ public class ItemServiceImpl implements ItemService {
         checkItemExistsById(itemId);
         checkUserExistsById(userId);
         checkItemOwner(itemId, userId);
-        Item item = itemMap.get(itemId);
+
+        Item item = itemJpaRepository.getReferenceById(itemId);
         Optional.ofNullable(itemRequestDto.getName()).ifPresent(item::setName);
         Optional.ofNullable(itemRequestDto.getDescription()).ifPresent(item::setDescription);
         Optional.ofNullable(itemRequestDto.getAvailable()).ifPresent(item::setAvailable);
-        itemMap.put(itemId, item);
+
         log.debug("Обновлен предмет с id = {} пользователем с id = {}", itemId, userId);
-        return ItemMapper.toItemResponseDto(item);
+        return ItemMapper.toItemResponseDto(itemJpaRepository.save(item));
     }
 
     @Override
-    public ItemResponseDto getItemById(Long itemId, Long userId) {
+    public ItemWithBookingsResponseDto getItemById(Long itemId, Long userId) {
         checkItemExistsById(itemId);
         log.debug("Получен предмет с id = {} пользователем с id = {}", itemId, userId);
-        return ItemMapper.toItemResponseDto(itemMap.get(itemId));
+        Item item = itemJpaRepository.getReferenceById(itemId);
+        if (item.getOwner().getId().equals(userId)) {
+            Booking lastBooking = bookingJpaRepository
+                    .findFirstByItemIdAndEndIsBeforeOrderByEndDesc(item.getId(), LocalDateTime.now())
+                    .orElse(null);
+            if (lastBooking != null && lastBooking.getStatus() == REJECTED) {
+                lastBooking = null;
+            }
+            Booking nextBooking = bookingJpaRepository
+                    .findFirstByItemIdAndStartIsAfterOrderByStart(item.getId(), LocalDateTime.now())
+                    .orElse(null);
+            if (nextBooking != null && nextBooking.getStatus() == REJECTED) {
+                nextBooking = null;
+            }
+            return ItemMapper.toItemWithBookingsResponseDto(item,
+                    lastBooking,
+                    nextBooking,
+                    commentJpaRepository.findAllByItemId(itemId));
+        }
+        return ItemMapper.toItemWithBookingsResponseDto(item,
+                null,
+                null,
+                commentJpaRepository.findAllByItemId(itemId));
     }
 
     @Override
-    public List<ItemResponseDto> getUserItems(Long userId) {
+    public List<ItemWithBookingsResponseDto> getUserItems(Long userId) {
         checkUserExistsById(userId);
-        List<Item> items = itemMap.values()
-                .stream()
-                .filter(item -> Objects.equals(item.getOwner().getId(), userId))
-                .collect(Collectors.toList());
         log.debug("Получение всех предметов пользователя с id = {}", userId);
-        return ItemMapper.fromItemListToItemResponseDtoList(items);
+        List<Item> items = itemJpaRepository.findAllByOwnerId(userId);
+        List<Long> itemIds = items.stream()
+                .map(Item::getId)
+                .collect(Collectors.toList());
+        List<Booking> lastBookings = bookingJpaRepository
+                .findFirstByItemIdInAndEndIsBeforeOrderByEndDesc(itemIds, LocalDateTime.now());
+        List<Booking> nextBookings = bookingJpaRepository
+                .findFirstByItemIdInAndStartIsAfterOrderByStart(itemIds, LocalDateTime.now());
+        Map<Long, Booking> lastBookingMap = lastBookings.stream()
+                .collect(Collectors.toMap(booking -> booking.getItem().getId(), Function.identity()));
+        Map<Long, Booking> nextBookingMap = nextBookings.stream()
+                .collect(Collectors.toMap(booking -> booking.getItem().getId(), Function.identity()));
+        Map<Long, List<Comment>> commentMap = commentJpaRepository
+                .findAllByItemIdIn(itemIds)
+                .stream()
+                .collect(Collectors.groupingBy(comment -> comment.getItem().getId()));
+        List<ItemWithBookingsResponseDto> itemWithBookingsResponseDtoList = new ArrayList<>();
+        for (Item item : items) {
+            itemWithBookingsResponseDtoList.add(ItemMapper.toItemWithBookingsResponseDto(item,
+                    lastBookingMap.get(item.getId()),
+                    nextBookingMap.get(item.getId()),
+                    commentMap.getOrDefault(item.getId(), Collections.emptyList())));
+        }
+
+        return itemWithBookingsResponseDtoList;
     }
 
     @Override
@@ -76,37 +128,46 @@ public class ItemServiceImpl implements ItemService {
             log.debug("Текст поиска пустой или равен null, возвращен пустой список");
             return Collections.emptyList();
         }
-        text = text.toLowerCase();
-        List<Item> itemList = new ArrayList<>();
-        for (Item item : itemMap.values()) {
-            if (!item.getAvailable()) {
-                continue;
-            }
-            boolean nameContains = StringUtils.containsIgnoreCase(item.getName(), text);
-            boolean descriptionContains = item.getDescription().toLowerCase().contains(text);
-            if (nameContains || descriptionContains) {
-                itemList.add(item);
-            }
-        }
+        List<Item> items = itemJpaRepository.findAllByText(text);
         log.debug("Найдены все предметы с подстрокой = {}", text);
-        return ItemMapper.fromItemListToItemResponseDtoList(itemList);
+        return ItemMapper.fromItemListToItemResponseDtoList(items);
+    }
+
+    @Override
+    public CommentResponseDto postComment(Long userId, Long itemId, CommentRequestDto commentRequestDto) {
+        if (!itemJpaRepository.existsById(itemId)) {
+            throw new NotFoundException("Вещи с указанным id не существует");
+        }
+        if (!userJpaRepository.existsById(userId)) {
+            throw new NotFoundException("Пользователя с указанным id не существует");
+        }
+        LocalDateTime time = LocalDateTime.now();
+        if (!bookingJpaRepository.existsByBookerIdAndItemIdAndEndIsBefore(userId, itemId, time)) {
+            throw new BadRequestException("Бронирование вещи с указанным id пользователем с указанным id не найдено");
+        }
+        Comment comment = ItemMapper.toComment(commentRequestDto,
+                userJpaRepository.getReferenceById(userId),
+                itemJpaRepository.getReferenceById(itemId),
+                time);
+        return ItemMapper.toCommentResponseDto(commentJpaRepository.save(comment));
     }
 
     private void checkUserExistsById(Long userId) {
-        if (!userService.getUserMap().containsKey(userId)) {
+        if (!userJpaRepository.existsById(userId)) {
             throw new UserNotFoundException("Пользователя с таким id не существует");
         }
     }
 
     private void checkItemExistsById(Long itemId) {
-        if (!itemMap.containsKey(itemId)) {
+        if (!itemJpaRepository.existsById(itemId)) {
             throw new ItemNotFoundException("Предмета с таким id не существует");
         }
     }
 
     private void checkItemOwner(Long itemId, Long userId) {
-        if (itemMap.get(itemId).getOwner() == null || !itemMap.get(itemId).getOwner().getId().equals(userId)) {
-            throw new UserNotFoundException("У данной вещи другой хозяиин");
+        Item item = itemJpaRepository.getReferenceById(itemId);
+        if (item.getOwner() == null || !item.getOwner().getId().equals(userId)) {
+            throw new UserNotFoundException("У данной вещи другой хозяин");
         }
     }
 }
