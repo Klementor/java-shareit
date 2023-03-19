@@ -39,6 +39,9 @@ public class BookingServiceImpl implements BookingService {
         if (bookItemRequestDto.getStart().isBefore(LocalDateTime.now())) {
             throw new BadRequestException("Время старта указано неверно");
         }
+        if (bookItemRequestDto.getStart().equals(bookItemRequestDto.getEnd())) {
+            throw new BadRequestException("Неверно указанное время");
+        }
         if (!itemJpaRepository.existsById(bookItemRequestDto.getItemId()) || !userJpaRepository.existsById(userId)) {
             throw new NotFoundException("Пользователя либо вещи не существует");
         }
@@ -105,7 +108,7 @@ public class BookingServiceImpl implements BookingService {
                     bookings = bookingJpaRepository.findBookingByBookerIdAndStartIsBeforeAndEndIsAfter(userId, now, now);
                     break;
                 case PAST:
-                    bookings = bookingJpaRepository.findBookingByBookerIdAndStartIsBeforeAndEndIsBefore(userId, now, now);
+                    bookings = bookingJpaRepository.findBookingByBookerIdAndStartIsBeforeAndEndIsBeforeOrderByEndDesc(userId, now, now);
                     break;
                 case FUTURE:
                     bookings = bookingJpaRepository.findBookingByBookerIdAndStartIsAfter(userId,

@@ -17,9 +17,9 @@ public interface BookingJpaRepository extends JpaRepository<Booking, Long> {
                                                                      @Param("time") LocalDateTime time1,
                                                                      @Param("time") LocalDateTime time2);
 
-    List<Booking> findBookingByBookerIdAndStartIsBeforeAndEndIsBefore(@Param("bookerId") Long userId,
-                                                                      @Param("time") LocalDateTime time1,
-                                                                      @Param("time") LocalDateTime time2);
+    List<Booking> findBookingByBookerIdAndStartIsBeforeAndEndIsBeforeOrderByEndDesc(@Param("bookerId") Long userId,
+                                                                                    @Param("time") LocalDateTime time1,
+                                                                                    @Param("time") LocalDateTime time2);
 
     List<Booking> findBookingByBookerIdAndStartIsAfter(@Param("bookerId") Long userId, @Param("time") LocalDateTime now, Sort sort);
 

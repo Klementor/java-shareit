@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -29,4 +30,8 @@ public class Item {
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "owner_id")
     private User owner;
+
+    @ManyToOne(optional = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "request_id")
+    private Request request;
 }

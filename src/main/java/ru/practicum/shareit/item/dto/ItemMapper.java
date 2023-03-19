@@ -21,7 +21,9 @@ public class ItemMapper {
         itemResponseDto.setName(item.getName());
         itemResponseDto.setDescription(item.getDescription());
         itemResponseDto.setAvailable(item.getAvailable());
-
+        if(item.getRequest() != null){
+            itemResponseDto.setRequestId(item.getRequest().getId());
+        }
         return itemResponseDto;
     }
 
@@ -54,7 +56,6 @@ public class ItemMapper {
         if (nextBooking != null) {
             itemWithBookingsResponseDto.setNextBooking(ItemWithBookingsResponseDto.BookingDto.fromBooking(nextBooking));
         }
-
 
         itemWithBookingsResponseDto.setId(item.getId());
         itemWithBookingsResponseDto.setName(item.getName());
