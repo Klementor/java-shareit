@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface ItemRequestJpaRepository extends JpaRepository<Request, Long> {
 
-    List<Request> findAllByRequesterId(Long RequesterId, Sort sort);
+    List<Request> findAllByRequesterId(Long requesterId, Sort sort);
 
     @Query("SELECT ir FROM Request  ir where ir.requester.id <> :requesterId")
     List<Request> findOtherUserItems(@Param("requesterId") Long requesterId, Pageable pageable);

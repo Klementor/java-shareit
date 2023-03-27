@@ -27,7 +27,7 @@ public class RequestMapper {
         response.setCreated(request.getDateTimeOfCreate());
         if (items != null) {
             var itemDtoList = new ArrayList<RequestResponseDto.ItemDto>();
-            for (Item item: items) {
+            for (Item item : items) {
                 itemDtoList.add(RequestResponseDto.ItemDto.toItemDtoFromItem(item));
             }
             response.setItems(itemDtoList);

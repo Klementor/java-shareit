@@ -2,6 +2,8 @@ package ru.practicum.shareit.booking.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -93,7 +95,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingResponseDto> getBookingsByUserId(Long userId, String state) {
+    public List<BookingResponseDto> getBookingsByUserId(Long userId, String state, Integer from, Integer size) {
+        Pageable pageable = PageRequest.of(from / size, size);
         if (!userJpaRepository.existsById(userId)) {
             throw new NotFoundException("Такого user id не существует");
         }
@@ -102,24 +105,24 @@ public class BookingServiceImpl implements BookingService {
         try {
             switch (State.valueOf(state)) {
                 case ALL:
-                    bookings = bookingJpaRepository.findBookingByBookerId(userId, Sort.by("start").descending());
+                    bookings = bookingJpaRepository.findBookingByBookerId(userId, PageRequest.of(from / size, size, Sort.by("start").descending()));
                     break;
                 case CURRENT:
-                    bookings = bookingJpaRepository.findBookingByBookerIdAndStartIsBeforeAndEndIsAfter(userId, now, now);
+                    bookings = bookingJpaRepository.findBookingByBookerIdAndStartIsBeforeAndEndIsAfter(userId, now, now, pageable);
                     break;
                 case PAST:
-                    bookings = bookingJpaRepository.findBookingByBookerIdAndStartIsBeforeAndEndIsBeforeOrderByEndDesc(userId, now, now);
+                    bookings = bookingJpaRepository.findBookingByBookerIdAndStartIsBeforeAndEndIsBeforeOrderByEndDesc(userId, now, now, pageable);
                     break;
                 case FUTURE:
                     bookings = bookingJpaRepository.findBookingByBookerIdAndStartIsAfter(userId,
                             now,
-                            Sort.by("start").descending());
+                            PageRequest.of(from / size, size, Sort.by("start").descending()));
                     break;
                 case WAITING:
-                    bookings = bookingJpaRepository.findBookingByBookerIdAndStatusEquals(userId, Booking.Status.WAITING);
+                    bookings = bookingJpaRepository.findBookingByBookerIdAndStatusEquals(userId, Booking.Status.WAITING, pageable);
                     break;
                 case REJECTED:
-                    bookings = bookingJpaRepository.findBookingByBookerIdAndStatusEquals(userId, Booking.Status.REJECTED);
+                    bookings = bookingJpaRepository.findBookingByBookerIdAndStatusEquals(userId, Booking.Status.REJECTED, pageable);
                     break;
                 default:
                     throw new BadRequestException(String.format("Unknown state: %s", state));
@@ -131,7 +134,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Iterable<BookingResponseDto> getBookingsByOwnerId(Long userId, String state) {
+    public Iterable<BookingResponseDto> getBookingsByOwnerId(Integer from, Integer size, Long userId, String state) {
+        Pageable pageable = PageRequest.of(from / size, size);
         if (!userJpaRepository.existsById(userId)) {
             throw new NotFoundException("Пользователя с указанным id не существует");
         }
@@ -140,31 +144,39 @@ public class BookingServiceImpl implements BookingService {
         try {
             switch (State.valueOf(state)) {
                 case ALL:
-                    bookings = bookingJpaRepository.findAllByItemOwnerId(userId, Sort.by("start").descending());
+                    bookings = bookingJpaRepository.findAllByItemOwnerId(userId, PageRequest.of(from / size, size,
+                            Sort.by("start").descending()));
                     break;
                 case CURRENT:
-                    bookings = bookingJpaRepository.findBookingByItemOwnerIdAndStartIsBeforeAndEndIsAfter(userId, now, now);
+                    bookings = bookingJpaRepository.findBookingByItemOwnerIdAndStartIsBeforeAndEndIsAfter(userId,
+                            now,
+                            now,
+                            pageable);
                     break;
                 case PAST:
                     bookings = bookingJpaRepository.findBookingByItemOwnerIdAndEndIsBefore(
                             userId,
                             now,
-                            Sort.by("start").descending());
+                            PageRequest.of(from / size, size,
+                                    Sort.by("start").descending()));
                     break;
                 case FUTURE:
                     bookings = bookingJpaRepository.findBookingByItemOwnerIdAndStartIsAfter(userId,
                             now,
-                            Sort.by("start").descending());
+                            PageRequest.of(from / size, size,
+                                    Sort.by("start").descending()));
                     break;
                 case WAITING:
                     bookings = bookingJpaRepository.findBookingByItemOwnerIdAndStatusEquals(
                             userId,
-                            Booking.Status.WAITING);
+                            Booking.Status.WAITING,
+                            pageable);
                     break;
                 case REJECTED:
                     bookings = bookingJpaRepository.findBookingByItemOwnerIdAndStatusEquals(
                             userId,
-                            Booking.Status.REJECTED);
+                            Booking.Status.REJECTED,
+                            pageable);
                     break;
                 default:
                     throw new BadRequestException(String.format("Unknown state: %s", state));

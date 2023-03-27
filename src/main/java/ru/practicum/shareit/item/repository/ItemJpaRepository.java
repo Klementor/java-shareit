@@ -19,5 +19,5 @@ public interface ItemJpaRepository extends JpaRepository<Item, Long> {
             "OR (((:text) IS NULL) OR (LOWER(items.description) LIKE LOWER(CONCAT('%', :text, '%')))))")
     List<Item> findAllByText(@Param("text") String text);
 
-    List<Item> findAllByRequestId (Long requestId);
+    List<Item> findAllByRequestId(Long requestId);
 }

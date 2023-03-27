@@ -23,7 +23,8 @@ public class RequestResponseDto {
         private String description;
         private Boolean available;
         private Long requestId;
-        public static ItemDto toItemDtoFromItem (Item item) {
+
+        public static ItemDto toItemDtoFromItem(Item item) {
             ItemDto itemDto = new ItemDto();
             itemDto.setId(item.getId());
             itemDto.setDescription(item.getDescription());

@@ -19,7 +19,6 @@ import ru.practicum.shareit.user.repository.UserJpaRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,20 +37,17 @@ public class RequestServiceImpl implements RequestService {
         }
         User user = userJpaRepository.getReferenceById(userId);
         Request request = RequestMapper.toRequest(itemRequestDto, user);
-        itemRequestJpaRepository.save(request);
-        return RequestMapper.toResponse(request, null);
+        Request savedRequest = itemRequestJpaRepository.save(request);
+        return RequestMapper.toResponse(savedRequest, null);
     }
 
     @Override
     public List<RequestResponseDto> getItemRequestByRequesterId(Long userId) {
-        if (userId == null) {
-            throw new BadRequestException("В запросе не был передан заголовок X-Sharer-User-Id");
-        }
         if (!userJpaRepository.existsById(userId)) {
             throw new NotFoundException("Пользователя не существует");
         }
         List<Request> requests = itemRequestJpaRepository.findAllByRequesterId(userId,
-                Sort.by("created_time").descending());
+                Sort.by("dateTimeOfCreate").descending());
         List<List<Item>> items = requests.stream()
                 .map(r -> itemJpaRepository
                         .findAllByRequestId(r.getId())).collect(Collectors.toList());
@@ -73,7 +69,7 @@ public class RequestServiceImpl implements RequestService {
         }
         List<Request> itemRequests = itemRequestJpaRepository
                 .findOtherUserItems(requesterId, PageRequest.of(from / size, size,
-                        Sort.by("created").descending()));
+                        Sort.by("dateTimeOfCreate").descending()));
         List<RequestResponseDto> requestResponseDtos = new ArrayList<>();
         for (Request request : itemRequests) {
             List<Item> items = itemJpaRepository.findAllByRequestId(request.getId());
@@ -93,8 +89,8 @@ public class RequestServiceImpl implements RequestService {
         if (!itemRequestJpaRepository.existsById(requestId)) {
             throw new NotFoundException("Запроса с таким id не существует");
         }
-        Optional<Request> request = itemRequestJpaRepository.findById(requestId);
+        Request request = itemRequestJpaRepository.getReferenceById(requestId);
         List<Item> items = itemJpaRepository.findAllByRequestId(requestId);
-        return RequestMapper.toResponse(request.get(), items);
+        return RequestMapper.toResponse(request, items);
     }
 }

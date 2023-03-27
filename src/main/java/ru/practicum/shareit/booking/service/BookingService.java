@@ -12,9 +12,9 @@ public interface BookingService {
 
     BookingResponseDto getBookingOnlyForOwnerOrBooker(Long userId, Long bookingId);
 
-    List<BookingResponseDto> getBookingsByUserId(Long userId, String state);
+    List<BookingResponseDto> getBookingsByUserId(Long userId, String state, Integer from, Integer size);
 
-    Iterable<BookingResponseDto> getBookingsByOwnerId(Long userId, String state);
+    Iterable<BookingResponseDto> getBookingsByOwnerId(Integer from, Integer size, Long userId, String state);
 
     enum State {
         ALL,

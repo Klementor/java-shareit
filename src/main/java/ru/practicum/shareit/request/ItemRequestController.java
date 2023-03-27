@@ -12,9 +12,6 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @RestController
 @Validated
 @RequestMapping(path = "/requests")
@@ -37,8 +34,8 @@ public class ItemRequestController {
     }
 
     @GetMapping("/all")
-    public List<RequestResponseDto> getAllItemRequests(@RequestParam @PositiveOrZero Integer from,
-                                                       @RequestParam @Positive Integer size,
+    public List<RequestResponseDto> getAllItemRequests(@PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                                       @Positive @RequestParam(defaultValue = "10") Integer size,
                                                        @RequestHeader(header) Long userId) {
         return requestService.getAllItemRequests(from, size, userId);
     }
