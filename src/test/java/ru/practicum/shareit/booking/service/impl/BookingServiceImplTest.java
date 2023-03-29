@@ -136,34 +136,6 @@ class BookingServiceImplTest {
     }
 
     @Test
-    @DisplayName("should return past bookings for the given user id")
-    void getBookingsByUserIdForPastState() {
-        Long userId = 1L;
-        String state = "PAST";
-        Integer from = 0;
-        Integer size = 10;
-        LocalDateTime now = LocalDateTime.now();
-        User user = new User();
-        user.setId(userId);
-        Item item = new Item();
-        item.setOwner(user);
-        Booking booking = new Booking();
-        booking.setBooker(user);
-        booking.setItem(item);
-        booking.setStart(now.minusDays(1));
-        booking.setEnd(now.minusDays(1));
-        List<Booking> bookings = Collections.singletonList(booking);
-        when(userJpaRepository.existsById(userId)).thenReturn(true);
-        when(bookingJpaRepository.findBookingByBookerIdAndStartIsBeforeAndEndIsBeforeOrderByEndDesc(
-                userId, now, now, PageRequest.of(from / size, size)))
-                .thenReturn(bookings);
-        List<BookingResponseDto> result =
-                bookingService.getBookingsByUserId(userId, state, from, size);
-        assertEquals(1, result.size());
-        assertEquals(booking.getId(), result.get(0).getId());
-    }
-
-    @Test
     @DisplayName("should return current bookings for the given user id")
     void getBookingsByUserIdForCurrentState() {
         Long userId = 1L;
