@@ -56,7 +56,7 @@ public class GlobalErrorAdvice {
 
     @Getter
     @Setter
-    private static class ErrorResponse {
+    public static class ErrorResponse {
         private String error;
 
         private static ErrorResponse fromMessage(String str) {
