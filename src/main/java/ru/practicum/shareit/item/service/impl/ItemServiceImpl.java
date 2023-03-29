@@ -75,7 +75,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemJpaRepository.getReferenceById(itemId);
         if (item.getOwner().getId().equals(userId)) {
             Booking lastBooking = bookingJpaRepository
-                    .findFirstByItemIdAndEndIsBeforeOrderByEndDesc(item.getId(), LocalDateTime.now().plusSeconds(5))
+                    .findFirstByItemIdAndEndIsBeforeOrderByEndDesc(item.getId(), LocalDateTime.now().plusHours(1))
                     .orElse(null);
             if (lastBooking != null && lastBooking.getStatus() == REJECTED) {
                 lastBooking = null;
