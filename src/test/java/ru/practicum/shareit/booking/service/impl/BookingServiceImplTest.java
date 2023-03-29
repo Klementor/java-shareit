@@ -438,7 +438,6 @@ class BookingServiceImplTest {
         Long userId = 1L;
         when(itemJpaRepository.existsById(bookItemRequestDto.getItemId())).thenReturn(false);
 
-
         assertThrows(
                 NotFoundException.class,
                 () -> bookingService.addBooking(bookItemRequestDto, userId));
@@ -468,7 +467,6 @@ class BookingServiceImplTest {
         item.setDescription("description");
         item.setAvailable(true);
         item.setOwner(user);
-
 
         Booking booking = new Booking();
         booking.setId(1L);
@@ -519,7 +517,6 @@ class BookingServiceImplTest {
         item.setAvailable(true);
         item.setOwner(user);
 
-
         Booking booking = new Booking();
         booking.setId(1L);
         booking.setStart(LocalDateTime.now().minusDays(1));
@@ -556,7 +553,6 @@ class BookingServiceImplTest {
         item.setDescription("description");
         item.setAvailable(true);
         item.setOwner(user);
-
 
         Booking booking = new Booking();
         booking.setId(1L);
@@ -596,7 +592,6 @@ class BookingServiceImplTest {
         item.setAvailable(true);
         item.setOwner(user);
 
-
         Booking booking = new Booking();
         booking.setId(1L);
         booking.setStart(LocalDateTime.now().minusDays(1));
@@ -635,7 +630,6 @@ class BookingServiceImplTest {
         item.setDescription("description");
         item.setAvailable(true);
         item.setOwner(user);
-
 
         Booking booking = new Booking();
         booking.setId(1L);
