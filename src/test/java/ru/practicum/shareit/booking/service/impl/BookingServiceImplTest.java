@@ -721,7 +721,6 @@ class BookingServiceImplTest {
         item.setAvailable(true);
         item.setOwner(user);
 
-
         Booking booking = new Booking();
         booking.setId(1L);
         booking.setStart(LocalDateTime.now().minusDays(1));
