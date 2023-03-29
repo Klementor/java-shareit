@@ -1,18 +1,5 @@
 package ru.practicum.shareit.booking.service.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDateTime;
-
-import org.junit.jupiter.api.Disabled;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +17,12 @@ import ru.practicum.shareit.item.repository.ItemJpaRepository;
 import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserJpaRepository;
+
+import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {BookingServiceImpl.class})
 @ExtendWith(SpringExtension.class)

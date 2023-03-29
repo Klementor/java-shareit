@@ -37,8 +37,8 @@ class GlobalErrorAdviceTest {
 
     @Test
     void testMethodArgumentNotValidExceptionHandler() {
-        GlobalErrorAdvice.ErrorResponse result = globalErrorAdvice.
-                methodArgumentNotValidExceptionHandler(new DataIntegrityViolationException("Error"));
+        GlobalErrorAdvice.ErrorResponse result = globalErrorAdvice
+                .methodArgumentNotValidExceptionHandler(new DataIntegrityViolationException("Error"));
         Assertions.assertEquals(result.getError(), "Error");
     }
 
