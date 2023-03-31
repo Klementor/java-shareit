@@ -675,6 +675,7 @@ class RequestServiceImplTest {
         verify(request).setId((Long) any());
         verify(request).setRequester((User) any());
     }
+
     private User createUser() {
         User user = new User();
         user.setEmail("jane.doe@example.org");

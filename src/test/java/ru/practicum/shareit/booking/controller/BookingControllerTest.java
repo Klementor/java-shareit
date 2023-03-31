@@ -141,12 +141,14 @@ class BookingControllerTest {
                 .perform(requestBuilder);
         actualPerformResult.andExpect(MockMvcResultMatchers.status().is(406));
     }
+
     private BookingResponseDto.ItemDto createItemDto() {
         BookingResponseDto.ItemDto itemDto = new BookingResponseDto.ItemDto();
         itemDto.setId(1L);
         itemDto.setName("Name");
         return itemDto;
     }
+
     private BookingResponseDto.UserDto createUserDto() {
         BookingResponseDto.UserDto userDto = new BookingResponseDto.UserDto();
         userDto.setId(1L);

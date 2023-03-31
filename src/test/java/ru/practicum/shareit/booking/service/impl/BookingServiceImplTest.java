@@ -225,7 +225,8 @@ class BookingServiceImplTest {
         Item item = createItem(user);
         itemJpaRepository.save(item);
 
-        Booking booking = createBooking(item, user);;
+        Booking booking = createBooking(item, user);
+        ;
         booking.setStatus(Booking.Status.APPROVED);
         bookingJpaRepository.save(booking);
 
@@ -498,6 +499,7 @@ class BookingServiceImplTest {
                 bookingService.getBookingOnlyForOwnerOrBooker(user.getId(), booking.getId());
         assertEquals(booking.getId(), bookingResponseDto.getId());
     }
+
     private List<User> createUsers() {
         User user = new User();
         user.setEmail("jane.doe@example.org");
@@ -513,6 +515,7 @@ class BookingServiceImplTest {
         listUsers.add(user2);
         return listUsers;
     }
+
     private Item createItem(User user) {
         Item item = new Item();
         item.setId(1L);
@@ -522,6 +525,7 @@ class BookingServiceImplTest {
         item.setOwner(user);
         return item;
     }
+
     private Booking createBooking(Item item, User user2) {
         Booking booking = new Booking();
         booking.setId(1L);

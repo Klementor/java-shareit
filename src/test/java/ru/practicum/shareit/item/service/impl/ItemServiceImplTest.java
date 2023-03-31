@@ -1048,6 +1048,7 @@ class ItemServiceImplTest {
         comment.setTime(LocalDateTime.of(1, 1, 1, 1, 1));
         return comment;
     }
+
     private Booking createBooking(User user, Item item) {
         Booking booking = new Booking();
         booking.setBooker(user);

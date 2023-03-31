@@ -104,6 +104,7 @@ class BookingMapperTest {
         assertTrue(BookingMapper.toListBookingResponseDto(iterable).isEmpty());
         verify(iterable).iterator();
     }
+
     private List<User> createUsers() {
         User user = new User();
         user.setEmail("jane.doe@example.org");
@@ -125,6 +126,7 @@ class BookingMapperTest {
         listUsers.add(user2);
         return listUsers;
     }
+
     private Request createRequest(User user2) {
         Request request = new Request();
         request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
@@ -133,6 +135,7 @@ class BookingMapperTest {
         request.setRequester(user2);
         return request;
     }
+
     private Item createItem(User user1, Request request) {
         Item item = new Item();
         item.setAvailable(true);
