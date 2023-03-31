@@ -10,9 +10,7 @@ import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.model.User;
 
 class BookingResponseDtoTest {
-    /**
-     * Method under test: {@link BookingResponseDto.ItemDto#fromItem(Item)}
-     */
+
     @Test
     void testItemDtoFromItem() {
         User user = new User();
@@ -43,9 +41,6 @@ class BookingResponseDtoTest {
         assertEquals("Name", actualFromItemResult.getName());
     }
 
-    /**
-     * Method under test: {@link BookingResponseDto.UserDto#fromUser(User)}
-     */
     @Test
     void testUserDtoFromUser() {
         User user = new User();

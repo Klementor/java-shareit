@@ -27,15 +27,9 @@ class UserServiceImplTest {
     @Autowired
     private UserServiceImpl userServiceImpl;
 
-    /**
-     * Method under test: {@link UserServiceImpl#addUser(UserRequestDto)}
-     */
     @Test
     void testAddUser() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        User user = createUser();
         when(userJpaRepository.save((User) any())).thenReturn(user);
         UserResponseDto actualAddUserResult = userServiceImpl.addUser(new UserRequestDto("Name", "jane.doe@example.org"));
         assertEquals("jane.doe@example.org", actualAddUserResult.getEmail());
@@ -44,31 +38,19 @@ class UserServiceImplTest {
         verify(userJpaRepository).save((User) any());
     }
 
-    /**
-     * Method under test: {@link UserServiceImpl#addUser(UserRequestDto)}
-     */
     @Test
-    void testAddUser3() {
+    void testAddUserNotFoundException() {
         when(userJpaRepository.save((User) any())).thenThrow(new NotFoundException("An error occurred"));
         assertThrows(NotFoundException.class,
                 () -> userServiceImpl.addUser(new UserRequestDto("Name", "jane.doe@example.org")));
         verify(userJpaRepository).save((User) any());
     }
 
-    /**
-     * Method under test: {@link UserServiceImpl#updateUser(UserRequestDto, Long)}
-     */
     @Test
     void testUpdateUser() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        User user = createUser();
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        User user1 = createUser();
         when(userJpaRepository.save((User) any())).thenReturn(user1);
         when(userJpaRepository.getReferenceById((Long) any())).thenReturn(user);
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
@@ -82,15 +64,9 @@ class UserServiceImplTest {
         verify(userJpaRepository).save((User) any());
     }
 
-    /**
-     * Method under test: {@link UserServiceImpl#updateUser(UserRequestDto, Long)}
-     */
     @Test
-    void testUpdateUser2() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+    void testUpdateUserNotFoundException() {
+        User user = createUser();
         when(userJpaRepository.save((User) any())).thenThrow(new NotFoundException("An error occurred"));
         when(userJpaRepository.getReferenceById((Long) any())).thenReturn(user);
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
@@ -101,20 +77,11 @@ class UserServiceImplTest {
         verify(userJpaRepository).save((User) any());
     }
 
-    /**
-     * Method under test: {@link UserServiceImpl#updateUser(UserRequestDto, Long)}
-     */
     @Test
-    void testUpdateUser3() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+    void testUpdateUserNotFoundEx() {
+        User user = createUser();
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        User user1 = createUser();
         when(userJpaRepository.save((User) any())).thenReturn(user1);
         when(userJpaRepository.getReferenceById((Long) any())).thenReturn(user);
         when(userJpaRepository.existsById((Long) any())).thenReturn(false);
@@ -123,15 +90,9 @@ class UserServiceImplTest {
         verify(userJpaRepository).existsById((Long) any());
     }
 
-    /**
-     * Method under test: {@link UserServiceImpl#getUserById(Long)}
-     */
     @Test
     void testGetUserById() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        User user = createUser();
         when(userJpaRepository.getReferenceById((Long) any())).thenReturn(user);
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
         UserResponseDto actualUserById = userServiceImpl.getUserById(1L);
@@ -142,11 +103,8 @@ class UserServiceImplTest {
         verify(userJpaRepository).getReferenceById((Long) any());
     }
 
-    /**
-     * Method under test: {@link UserServiceImpl#getUserById(Long)}
-     */
     @Test
-    void testGetUserById2() {
+    void testGetUserByIdNotFoundException() {
         when(userJpaRepository.getReferenceById((Long) any())).thenThrow(new NotFoundException("An error occurred"));
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
         assertThrows(NotFoundException.class, () -> userServiceImpl.getUserById(1L));
@@ -154,24 +112,15 @@ class UserServiceImplTest {
         verify(userJpaRepository).getReferenceById((Long) any());
     }
 
-    /**
-     * Method under test: {@link UserServiceImpl#getUserById(Long)}
-     */
     @Test
-    void testGetUserById3() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+    void testGetUserByIdNotFoundEx() {
+        User user = createUser();
         when(userJpaRepository.getReferenceById((Long) any())).thenReturn(user);
         when(userJpaRepository.existsById((Long) any())).thenReturn(false);
         assertThrows(NotFoundException.class, () -> userServiceImpl.getUserById(1L));
         verify(userJpaRepository).existsById((Long) any());
     }
 
-    /**
-     * Method under test: {@link UserServiceImpl#deleteUserById(Long)}
-     */
     @Test
     void testDeleteUserById() {
         doNothing().when(userJpaRepository).deleteById((Long) any());
@@ -181,11 +130,8 @@ class UserServiceImplTest {
         verify(userJpaRepository).deleteById((Long) any());
     }
 
-    /**
-     * Method under test: {@link UserServiceImpl#deleteUserById(Long)}
-     */
     @Test
-    void testDeleteUserById2() {
+    void testDeleteUserByIdNotFoundException() {
         doThrow(new NotFoundException("An error occurred")).when(userJpaRepository).deleteById((Long) any());
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
         assertThrows(NotFoundException.class, () -> userServiceImpl.deleteUserById(1L));
@@ -193,20 +139,14 @@ class UserServiceImplTest {
         verify(userJpaRepository).deleteById((Long) any());
     }
 
-    /**
-     * Method under test: {@link UserServiceImpl#deleteUserById(Long)}
-     */
     @Test
-    void testDeleteUserById3() {
+    void testDeleteUserByIdNotFoundEx() {
         doNothing().when(userJpaRepository).deleteById((Long) any());
         when(userJpaRepository.existsById((Long) any())).thenReturn(false);
         assertThrows(NotFoundException.class, () -> userServiceImpl.deleteUserById(1L));
         verify(userJpaRepository).existsById((Long) any());
     }
 
-    /**
-     * Method under test: {@link UserServiceImpl#getUsers()}
-     */
     @Test
     void testGetUsers() {
         when(userJpaRepository.findAll()).thenReturn(new ArrayList<>());
@@ -214,15 +154,9 @@ class UserServiceImplTest {
         verify(userJpaRepository).findAll();
     }
 
-    /**
-     * Method under test: {@link UserServiceImpl#getUsers()}
-     */
     @Test
-    void testGetUsers2() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Найдены все пользователи");
+    void testGetUser() {
+        User user = createUser();
 
         ArrayList<User> userList = new ArrayList<>();
         userList.add(user);
@@ -231,20 +165,14 @@ class UserServiceImplTest {
         assertEquals(1, actualUsers.size());
         UserResponseDto getResult = actualUsers.get(0);
         assertEquals("jane.doe@example.org", getResult.getEmail());
-        assertEquals("Найдены все пользователи", getResult.getName());
+        assertEquals("Name", getResult.getName());
         assertEquals(1L, getResult.getId().longValue());
         verify(userJpaRepository).findAll();
     }
 
-    /**
-     * Method under test: {@link UserServiceImpl#getUsers()}
-     */
     @Test
-    void testGetUsers3() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Найдены все пользователи");
+    void testGetUsersForTwoUsers() {
+        User user = createUser();
 
         User user1 = new User();
         user1.setEmail("john.smith@example.org");
@@ -260,7 +188,7 @@ class UserServiceImplTest {
         UserResponseDto getResult = actualUsers.get(0);
         assertEquals("Name", getResult.getName());
         UserResponseDto getResult1 = actualUsers.get(1);
-        assertEquals("Найдены все пользователи", getResult1.getName());
+        assertEquals("Name", getResult1.getName());
         assertEquals(1L, getResult1.getId().longValue());
         assertEquals("jane.doe@example.org", getResult1.getEmail());
         assertEquals(2L, getResult.getId().longValue());
@@ -268,14 +196,19 @@ class UserServiceImplTest {
         verify(userJpaRepository).findAll();
     }
 
-    /**
-     * Method under test: {@link UserServiceImpl#getUsers()}
-     */
     @Test
-    void testGetUsers4() {
+    void testGetUsersNotFoundEx() {
         when(userJpaRepository.findAll()).thenThrow(new NotFoundException("An error occurred"));
         assertThrows(NotFoundException.class, () -> userServiceImpl.getUsers());
         verify(userJpaRepository).findAll();
+    }
+
+    private User createUser() {
+        User user = new User();
+        user.setEmail("jane.doe@example.org");
+        user.setId(1L);
+        user.setName("Name");
+        return user;
     }
 }
 

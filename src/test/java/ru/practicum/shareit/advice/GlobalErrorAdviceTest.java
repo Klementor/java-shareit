@@ -10,11 +10,9 @@ import org.slf4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
 import ru.practicum.shareit.exception.NotFoundException;
 
-import static org.mockito.Mockito.*;
-
 class GlobalErrorAdviceTest {
     @Mock
-    Logger log;
+    private Logger log;
     @InjectMocks
     GlobalErrorAdvice globalErrorAdvice;
 

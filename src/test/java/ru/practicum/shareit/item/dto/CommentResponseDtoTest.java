@@ -8,21 +8,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 
 class CommentResponseDtoTest {
-    /**
-     * Methods under test:
-     *
-     * <ul>
-     *   <li>default or parameterless constructor of {@link CommentResponseDto}
-     *   <li>{@link CommentResponseDto#setAuthorName(String)}
-     *   <li>{@link CommentResponseDto#setCreated(LocalDateTime)}
-     *   <li>{@link CommentResponseDto#setId(Long)}
-     *   <li>{@link CommentResponseDto#setText(String)}
-     *   <li>{@link CommentResponseDto#getAuthorName()}
-     *   <li>{@link CommentResponseDto#getCreated()}
-     *   <li>{@link CommentResponseDto#getId()}
-     *   <li>{@link CommentResponseDto#getText()}
-     * </ul>
-     */
+
     @Test
     void testConstructor() {
         CommentResponseDto actualCommentResponseDto = new CommentResponseDto();

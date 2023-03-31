@@ -5,17 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 class UserRequestDtoTest {
-    /**
-     * Methods under test:
-     *
-     * <ul>
-     *   <li>{@link UserRequestDto#UserRequestDto()}
-     *   <li>{@link UserRequestDto#setEmail(String)}
-     *   <li>{@link UserRequestDto#setName(String)}
-     *   <li>{@link UserRequestDto#getEmail()}
-     *   <li>{@link UserRequestDto#getName()}
-     * </ul>
-     */
+
     @Test
     void testConstructor() {
         UserRequestDto actualUserRequestDto = new UserRequestDto();
@@ -25,19 +15,8 @@ class UserRequestDtoTest {
         assertEquals("Name", actualUserRequestDto.getName());
     }
 
-    /**
-     * Methods under test:
-     *
-     * <ul>
-     *   <li>{@link UserRequestDto#UserRequestDto(String, String)}
-     *   <li>{@link UserRequestDto#setEmail(String)}
-     *   <li>{@link UserRequestDto#setName(String)}
-     *   <li>{@link UserRequestDto#getEmail()}
-     *   <li>{@link UserRequestDto#getName()}
-     * </ul>
-     */
     @Test
-    void testConstructor2() {
+    void testConstructorSecond() {
         UserRequestDto actualUserRequestDto = new UserRequestDto("Name", "jane.doe@example.org");
         actualUserRequestDto.setEmail("jane.doe@example.org");
         actualUserRequestDto.setName("Name");

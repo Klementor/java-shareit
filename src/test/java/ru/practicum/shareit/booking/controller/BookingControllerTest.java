@@ -32,26 +32,14 @@ class BookingControllerTest {
     @MockBean
     private BookingService bookingService;
 
-    /**
-     * Method under test: {@link BookingController#addBooking(BookItemRequestDto, Long)}
-     */
     @Test
     void testAddBooking2() {
+        BookingResponseDto.UserDto userDto = createUserDto();
 
-        BookingResponseDto.UserDto userDto = new BookingResponseDto.UserDto();
-        userDto.setId(1L);
+        BookingResponseDto.ItemDto itemDto = createItemDto();
 
-        BookingResponseDto.ItemDto itemDto = new BookingResponseDto.ItemDto();
-        itemDto.setId(1L);
-        itemDto.setName("Name");
+        BookingResponseDto bookingResponseDto = createBookingResponseDto(userDto, itemDto);
 
-        BookingResponseDto bookingResponseDto = new BookingResponseDto();
-        bookingResponseDto.setBooker(userDto);
-        bookingResponseDto.setEnd(LocalDateTime.of(1, 1, 1, 1, 1));
-        bookingResponseDto.setId(1L);
-        bookingResponseDto.setItem(itemDto);
-        bookingResponseDto.setStart(LocalDateTime.of(1, 1, 1, 1, 1));
-        bookingResponseDto.setStatus(Booking.Status.WAITING);
         BookingServiceImpl bookingServiceImpl = mock(BookingServiceImpl.class);
         when(bookingServiceImpl.addBooking((BookItemRequestDto) any(), (Long) any())).thenReturn(bookingResponseDto);
         BookingController bookingController = new BookingController(bookingServiceImpl);
@@ -64,25 +52,14 @@ class BookingControllerTest {
         verify(bookingServiceImpl).addBooking((BookItemRequestDto) any(), (Long) any());
     }
 
-    /**
-     * Method under test: {@link BookingController#updateBooking(Long, Long, Boolean)}
-     */
     @Test
     void testUpdateBooking() throws Exception {
-        BookingResponseDto.UserDto userDto = new BookingResponseDto.UserDto();
-        userDto.setId(1L);
+        BookingResponseDto.UserDto userDto = createUserDto();
 
-        BookingResponseDto.ItemDto itemDto = new BookingResponseDto.ItemDto();
-        itemDto.setId(1L);
-        itemDto.setName("Name");
+        BookingResponseDto.ItemDto itemDto = createItemDto();
 
-        BookingResponseDto bookingResponseDto = new BookingResponseDto();
-        bookingResponseDto.setBooker(userDto);
-        bookingResponseDto.setEnd(LocalDateTime.of(1, 1, 1, 1, 1));
-        bookingResponseDto.setId(1L);
-        bookingResponseDto.setItem(itemDto);
-        bookingResponseDto.setStart(LocalDateTime.of(1, 1, 1, 1, 1));
-        bookingResponseDto.setStatus(Booking.Status.WAITING);
+        BookingResponseDto bookingResponseDto = createBookingResponseDto(userDto, itemDto);
+
         when(bookingService.updateBooking((Long) any(), (Long) any(), (Boolean) any())).thenReturn(bookingResponseDto);
         MockHttpServletRequestBuilder patchResult = MockMvcRequestBuilders.patch("/bookings/{bookingId}", 1L);
         MockHttpServletRequestBuilder requestBuilder = patchResult.param("approved", String.valueOf(true))
@@ -98,25 +75,14 @@ class BookingControllerTest {
                                         + "\"name\":\"Name\"}}"));
     }
 
-    /**
-     * Method under test: {@link BookingController#getBookingOnlyForOwnerOrBooker(Long, Long)}
-     */
     @Test
     void testGetBookingOnlyForOwnerOrBooker() throws Exception {
-        BookingResponseDto.UserDto userDto = new BookingResponseDto.UserDto();
-        userDto.setId(1L);
+        BookingResponseDto.UserDto userDto = createUserDto();
 
-        BookingResponseDto.ItemDto itemDto = new BookingResponseDto.ItemDto();
-        itemDto.setId(1L);
-        itemDto.setName("Name");
+        BookingResponseDto.ItemDto itemDto = createItemDto();
 
-        BookingResponseDto bookingResponseDto = new BookingResponseDto();
-        bookingResponseDto.setBooker(userDto);
-        bookingResponseDto.setEnd(LocalDateTime.of(1, 1, 1, 1, 1));
-        bookingResponseDto.setId(1L);
-        bookingResponseDto.setItem(itemDto);
-        bookingResponseDto.setStart(LocalDateTime.of(1, 1, 1, 1, 1));
-        bookingResponseDto.setStatus(Booking.Status.WAITING);
+        BookingResponseDto bookingResponseDto = createBookingResponseDto(userDto, itemDto);
+
         when(bookingService.getBookingOnlyForOwnerOrBooker((Long) any(), (Long) any())).thenReturn(bookingResponseDto);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/bookings/{bookingId}", 1L)
                 .header("X-Sharer-User-Id", "42");
@@ -131,9 +97,6 @@ class BookingControllerTest {
                                         + "\"name\":\"Name\"}}"));
     }
 
-    /**
-     * Method under test: {@link BookingController#getBookingsByUserId(Integer, Integer, Long, String)}
-     */
     @Test
     void testGetBookingsByUserId() throws Exception {
         when(bookingService.getBookingsByUserId((Long) any(), (String) any(), (Integer) any(), (Integer) any()))
@@ -150,9 +113,6 @@ class BookingControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string("[]"));
     }
 
-    /**
-     * Method under test: {@link BookingController#getBookingsByOwnerId(Integer, Integer, Long, String)}
-     */
     @Test
     void testGetBookingsByOwnerId() throws Exception {
         when(bookingService.getBookingsByOwnerId((Integer) any(), (Integer) any(), (Long) any(), (String) any()))
@@ -167,11 +127,8 @@ class BookingControllerTest {
         actualPerformResult.andExpect(MockMvcResultMatchers.status().is(400));
     }
 
-    /**
-     * Method under test: {@link BookingController#getBookingsByOwnerId(Integer, Integer, Long, String)}
-     */
     @Test
-    void testGetBookingsByOwnerId2() throws Exception {
+    void testGetBookingsByOwnerIdTwo() throws Exception {
         when(bookingService.getBookingsByOwnerId((Integer) any(), (Integer) any(), (Long) any(), (String) any()))
                 .thenReturn((Iterable<BookingResponseDto>) mock(Iterable.class));
         MockHttpServletRequestBuilder getResult = MockMvcRequestBuilders.get("/bookings/owner");
@@ -183,6 +140,28 @@ class BookingControllerTest {
                 .build()
                 .perform(requestBuilder);
         actualPerformResult.andExpect(MockMvcResultMatchers.status().is(406));
+    }
+    private BookingResponseDto.ItemDto createItemDto() {
+        BookingResponseDto.ItemDto itemDto = new BookingResponseDto.ItemDto();
+        itemDto.setId(1L);
+        itemDto.setName("Name");
+        return itemDto;
+    }
+    private BookingResponseDto.UserDto createUserDto() {
+        BookingResponseDto.UserDto userDto = new BookingResponseDto.UserDto();
+        userDto.setId(1L);
+        return userDto;
+    }
+
+    private BookingResponseDto createBookingResponseDto(BookingResponseDto.UserDto userDto, BookingResponseDto.ItemDto itemDto) {
+        BookingResponseDto bookingResponseDto = new BookingResponseDto();
+        bookingResponseDto.setBooker(userDto);
+        bookingResponseDto.setEnd(LocalDateTime.of(1, 1, 1, 1, 1));
+        bookingResponseDto.setId(1L);
+        bookingResponseDto.setItem(itemDto);
+        bookingResponseDto.setStart(LocalDateTime.of(1, 1, 1, 1, 1));
+        bookingResponseDto.setStatus(Booking.Status.WAITING);
+        return bookingResponseDto;
     }
 }
 

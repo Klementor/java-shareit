@@ -19,6 +19,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserJpaRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -71,22 +72,11 @@ class BookingServiceImplTest {
         Integer from = 0;
         Integer size = 10;
 
-        User user = new User();
-        user.setId(1L);
-        user.setName("user");
-        user.setEmail("user@mail.ru");
+        List<User> users = createUsers();
+        User user = users.get(0);
+        User user2 = users.get(1);
 
-        User user2 = new User();
-        user.setId(2L);
-        user.setName("user2");
-        user.setEmail("user2@mail.ru");
-
-        Item item = new Item();
-        item.setId(1L);
-        item.setName("item");
-        item.setDescription("description");
-        item.setAvailable(true);
-        item.setOwner(user);
+        Item item = createItem(user);
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime start = now.plusDays(1);
@@ -144,62 +134,33 @@ class BookingServiceImplTest {
         Integer size = 10;
         LocalDateTime now = LocalDateTime.now();
 
-        User user = new User();
-        user.setId(1L);
-        user.setName("user");
-        user.setEmail("user@mail.ru");
+        List<User> users = createUsers();
+        User user = users.get(0);
+        User user2 = users.get(1);
 
-        User user2 = new User();
-        user.setId(2L);
-        user.setName("user2");
-        user.setEmail("user2@mail.ru");
+        Item item = createItem(user);
 
-        Item item = new Item();
-        item.setId(1L);
-        item.setName("item");
-        item.setDescription("description");
-        item.setAvailable(true);
-        item.setOwner(user);
-
-        Booking booking1 = new Booking();
-        booking1.setId(1L);
-        booking1.setStart(now.minusDays(1));
-        booking1.setEnd(now.plusDays(1));
-        booking1.setItem(item);
-        booking1.setBooker(user2);
-        List<Booking> bookings = Arrays.asList(booking1);
+        Booking booking = createBooking(item, user2);
+        List<Booking> bookings = Arrays.asList(booking);
         when(userJpaRepository.existsById(userId)).thenReturn(true);
         when(bookingJpaRepository.findBookingByBookerIdAndStartIsBeforeAndEndIsAfter(
                 any(), any(), any(), any()))
                 .thenReturn(bookings);
         List<BookingResponseDto> result =
                 bookingService.getBookingsByUserId(userId, state, from, size);
-        assertEquals(booking1.getId(), result.get(0).getId());
+        assertEquals(booking.getId(), result.get(0).getId());
     }
 
     @Test
     @DisplayName("should return waiting bookings for the owner when state is WAITING")
     void getBookingsByOwnerIdWhenStateIsWaiting() {
-        User user = new User();
-        user.setId(1L);
-        user.setName("user");
-        user.setEmail("user@mail.ru");
-        userJpaRepository.save(user);
+        List<User> users = createUsers();
+        User user = users.get(0);
 
-        Item item = new Item();
-        item.setId(1L);
-        item.setName("item");
-        item.setDescription("description");
-        item.setAvailable(true);
-        item.setOwner(user);
+        Item item = createItem(user);
         itemJpaRepository.save(item);
 
-        Booking booking = new Booking();
-        booking.setId(1L);
-        booking.setStart(LocalDateTime.now());
-        booking.setEnd(LocalDateTime.now().plusDays(1));
-        booking.setItem(item);
-        booking.setBooker(user);
+        Booking booking = createBooking(item, user);
         booking.setStatus(Booking.Status.WAITING);
         bookingJpaRepository.save(booking);
 
@@ -213,26 +174,13 @@ class BookingServiceImplTest {
     @Test
     @DisplayName("should return future bookings for the owner when state is FUTURE")
     void getBookingsByOwnerIdWhenStateIsFuture() {
-        User user = new User();
-        user.setId(1L);
-        user.setName("user");
-        user.setEmail("user@mail.ru");
-        userJpaRepository.save(user);
+        List<User> users = createUsers();
+        User user = users.get(0);
 
-        Item item = new Item();
-        item.setId(1L);
-        item.setName("item");
-        item.setDescription("description");
-        item.setAvailable(true);
-        item.setOwner(user);
+        Item item = createItem(user);
         itemJpaRepository.save(item);
 
-        Booking booking = new Booking();
-        booking.setId(1L);
-        booking.setStart(LocalDateTime.now().plusDays(1));
-        booking.setEnd(LocalDateTime.now().plusDays(2));
-        booking.setItem(item);
-        booking.setBooker(user);
+        Booking booking = createBooking(item, user);
         bookingJpaRepository.save(booking);
         when(userJpaRepository.existsById(any())).thenReturn(true);
         Iterable<BookingResponseDto> bookings =
@@ -244,26 +192,13 @@ class BookingServiceImplTest {
     @Test
     @DisplayName("should return all bookings for the owner when state is ALL")
     void getBookingsByOwnerIdWhenStateIsAll() {
-        User user = new User();
-        user.setId(1L);
-        user.setName("user");
-        user.setEmail("user@mail.ru");
-        userJpaRepository.save(user);
+        List<User> users = createUsers();
+        User user = users.get(0);
 
-        Item item = new Item();
-        item.setId(1L);
-        item.setName("item");
-        item.setDescription("description");
-        item.setAvailable(true);
-        item.setOwner(user);
+        Item item = createItem(user);
         itemJpaRepository.save(item);
 
-        Booking booking = new Booking();
-        booking.setId(1L);
-        booking.setStart(LocalDateTime.now());
-        booking.setEnd(LocalDateTime.now().plusDays(1));
-        booking.setItem(item);
-        booking.setBooker(user);
+        Booking booking = createBooking(item, user);
         bookingJpaRepository.save(booking);
 
         BookingResponseDto bookingResponseDto = new BookingResponseDto();
@@ -284,26 +219,13 @@ class BookingServiceImplTest {
     @Test
     @DisplayName("should return past bookings for the owner when state is PAST")
     void getBookingsByOwnerIdWhenStateIsPast() {
-        User user = new User();
-        user.setId(1L);
-        user.setName("user");
-        user.setEmail("user@mail.ru");
-        userJpaRepository.save(user);
+        List<User> users = createUsers();
+        User user = users.get(0);
 
-        Item item = new Item();
-        item.setId(1L);
-        item.setName("item");
-        item.setDescription("description");
-        item.setAvailable(true);
-        item.setOwner(user);
+        Item item = createItem(user);
         itemJpaRepository.save(item);
 
-        Booking booking = new Booking();
-        booking.setId(1L);
-        booking.setStart(LocalDateTime.now().minusDays(1));
-        booking.setEnd(LocalDateTime.now().minusDays(1));
-        booking.setItem(item);
-        booking.setBooker(user);
+        Booking booking = createBooking(item, user);;
         booking.setStatus(Booking.Status.APPROVED);
         bookingJpaRepository.save(booking);
 
@@ -325,26 +247,13 @@ class BookingServiceImplTest {
     @Test
     @DisplayName("should return current bookings for the owner when state is CURRENT")
     void getBookingsByOwnerIdWhenStateIsCurrent() {
-        User user = new User();
-        user.setId(1L);
-        user.setName("user");
-        user.setEmail("user@mail.ru");
-        userJpaRepository.save(user);
+        List<User> users = createUsers();
+        User user = users.get(0);
 
-        Item item = new Item();
-        item.setId(1L);
-        item.setName("item");
-        item.setDescription("description");
-        item.setAvailable(true);
-        item.setOwner(user);
+        Item item = createItem(user);
         itemJpaRepository.save(item);
 
-        Booking booking = new Booking();
-        booking.setId(1L);
-        booking.setStart(LocalDateTime.now().minusDays(1));
-        booking.setEnd(LocalDateTime.now().plusDays(1));
-        booking.setItem(item);
-        booking.setBooker(user);
+        Booking booking = createBooking(item, user);
         booking.setStatus(Booking.Status.APPROVED);
         bookingJpaRepository.save(booking);
         when(userJpaRepository.existsById(any())).thenReturn(true);
@@ -423,29 +332,13 @@ class BookingServiceImplTest {
         bookItemRequestDto.setStart(LocalDateTime.now().plusHours(1));
         bookItemRequestDto.setEnd(LocalDateTime.now().plusDays(1));
 
-        User user = new User();
-        user.setId(1L);
-        user.setName("user");
-        user.setEmail("user@mail.ru");
+        List<User> users = createUsers();
+        User user = users.get(0);
+        User user2 = users.get(1);
 
-        User user2 = new User();
-        user2.setId(2L);
-        user2.setName("user2");
-        user2.setEmail("user2@mail.ru");
+        Item item = createItem(user);
 
-        Item item = new Item();
-        item.setId(1L);
-        item.setName("item");
-        item.setDescription("description");
-        item.setAvailable(true);
-        item.setOwner(user);
-
-        Booking booking = new Booking();
-        booking.setId(1L);
-        booking.setStart(LocalDateTime.now().minusDays(1));
-        booking.setEnd(LocalDateTime.now().plusDays(1));
-        booking.setItem(item);
-        booking.setBooker(user2);
+        Booking booking = createBooking(item, user2);
         booking.setStatus(Booking.Status.APPROVED);
 
         when(itemJpaRepository.getReferenceById(any())).thenReturn(item);
@@ -472,29 +365,13 @@ class BookingServiceImplTest {
     @Test
     @DisplayName("should throw a BadRequestException when the booking status is already approved")
     void updateBookingWhenStatusIsAlreadyApprovedThenThrowBadRequestException() {
-        User user = new User();
-        user.setId(1L);
-        user.setName("user");
-        user.setEmail("user@mail.ru");
+        List<User> users = createUsers();
+        User user = users.get(0);
+        User user2 = users.get(1);
 
-        User user2 = new User();
-        user2.setId(2L);
-        user2.setName("user2");
-        user2.setEmail("user2@mail.ru");
+        Item item = createItem(user);
 
-        Item item = new Item();
-        item.setId(1L);
-        item.setName("item");
-        item.setDescription("description");
-        item.setAvailable(true);
-        item.setOwner(user);
-
-        Booking booking = new Booking();
-        booking.setId(1L);
-        booking.setStart(LocalDateTime.now().minusDays(1));
-        booking.setEnd(LocalDateTime.now().plusDays(1));
-        booking.setItem(item);
-        booking.setBooker(user2);
+        Booking booking = createBooking(item, user2);
         booking.setStatus(Booking.Status.APPROVED);
 
         when(bookingJpaRepository.getReferenceById(booking.getId())).thenReturn(booking);
@@ -509,29 +386,13 @@ class BookingServiceImplTest {
     @Test
     @DisplayName("should throw a NotFoundException when the user id is not the owner of the item")
     void updateBookingWhenUserIdIsNotOwnerThenThrowNotFoundException() {
-        User user = new User();
-        user.setId(1L);
-        user.setName("user");
-        user.setEmail("user@mail.ru");
+        List<User> users = createUsers();
+        User user = users.get(0);
+        User user2 = users.get(1);
 
-        User user2 = new User();
-        user2.setId(2L);
-        user2.setName("user2");
-        user2.setEmail("user2@mail.ru");
+        Item item = createItem(user);
 
-        Item item = new Item();
-        item.setId(1L);
-        item.setName("item");
-        item.setDescription("description");
-        item.setAvailable(true);
-        item.setOwner(user);
-
-        Booking booking = new Booking();
-        booking.setId(1L);
-        booking.setStart(LocalDateTime.now().minusDays(1));
-        booking.setEnd(LocalDateTime.now().plusDays(1));
-        booking.setItem(item);
-        booking.setBooker(user2);
+        Booking booking = createBooking(item, user2);
         booking.setStatus(Booking.Status.APPROVED);
 
         when(userJpaRepository.existsById(any())).thenReturn(true);
@@ -547,29 +408,13 @@ class BookingServiceImplTest {
     @DisplayName(
             "should update the booking status to approved when the user is the owner and the status is not already approved")
     void updateBookingToApprovedWhenUserIsOwnerAndStatusNotApproved() {
-        User user = new User();
-        user.setId(1L);
-        user.setName("user");
-        user.setEmail("user@mail.ru");
+        List<User> users = createUsers();
+        User user = users.get(0);
+        User user2 = users.get(1);
 
-        User user2 = new User();
-        user2.setId(2L);
-        user2.setName("user2");
-        user2.setEmail("user2@mail.ru");
+        Item item = createItem(user);
 
-        Item item = new Item();
-        item.setId(1L);
-        item.setName("item");
-        item.setDescription("description");
-        item.setAvailable(true);
-        item.setOwner(user);
-
-        Booking booking = new Booking();
-        booking.setId(1L);
-        booking.setStart(LocalDateTime.now().minusDays(1));
-        booking.setEnd(LocalDateTime.now().plusDays(1));
-        booking.setItem(item);
-        booking.setBooker(user2);
+        Booking booking = createBooking(item, user2);
 
         when(bookingJpaRepository.existsById(any())).thenReturn(true);
         when(userJpaRepository.existsById(any())).thenReturn(true);
@@ -586,29 +431,13 @@ class BookingServiceImplTest {
     @DisplayName(
             "should update the booking status to rejected when the user is the owner and the status is not already approved")
     void updateBookingToRejectedWhenUserIsOwnerAndStatusNotApproved() {
-        User user = new User();
-        user.setId(1L);
-        user.setName("user");
-        user.setEmail("user@mail.ru");
+        List<User> users = createUsers();
+        User user = users.get(0);
+        User user2 = users.get(1);
 
-        User user2 = new User();
-        user2.setId(2L);
-        user2.setName("user2");
-        user2.setEmail("user2@mail.ru");
+        Item item = createItem(user);
 
-        Item item = new Item();
-        item.setId(1L);
-        item.setName("item");
-        item.setDescription("description");
-        item.setAvailable(true);
-        item.setOwner(user);
-
-        Booking booking = new Booking();
-        booking.setId(1L);
-        booking.setStart(LocalDateTime.now().minusDays(1));
-        booking.setEnd(LocalDateTime.now().plusDays(1));
-        booking.setItem(item);
-        booking.setBooker(user2);
+        Booking booking = createBooking(item, user2);
 
         when(bookingJpaRepository.existsById(any())).thenReturn(true);
         when(userJpaRepository.existsById(any())).thenReturn(true);
@@ -635,29 +464,13 @@ class BookingServiceImplTest {
     @DisplayName(
             "should throw a NotFoundException when the user is neither the owner nor the booker")
     void getBookingOnlyForOwnerOrBookerWhenUserIsNotOwnerOrBookerThenThrowNotFoundException() {
-        User user = new User();
-        user.setId(1L);
-        user.setName("user");
-        user.setEmail("user@mail.ru");
+        List<User> users = createUsers();
+        User user = users.get(0);
+        User user2 = users.get(1);
 
-        User user2 = new User();
-        user2.setId(2L);
-        user2.setName("user2");
-        user2.setEmail("user2@mail.ru");
+        Item item = createItem(user);
 
-        Item item = new Item();
-        item.setId(1L);
-        item.setName("item");
-        item.setDescription("description");
-        item.setAvailable(true);
-        item.setOwner(user);
-
-        Booking booking = new Booking();
-        booking.setId(1L);
-        booking.setStart(LocalDateTime.now().minusDays(1));
-        booking.setEnd(LocalDateTime.now().plusDays(1));
-        booking.setItem(item);
-        booking.setBooker(user2);
+        Booking booking = createBooking(item, user2);
 
         when(bookingJpaRepository.existsById(any())).thenReturn(true);
         when(userJpaRepository.existsById(any())).thenReturn(true);
@@ -670,29 +483,13 @@ class BookingServiceImplTest {
     @Test
     @DisplayName("should return the booking when the user is the owner or the booker")
     void getBookingOnlyForOwnerOrBookerWhenUserIsOwnerOrBooker() {
-        User user = new User();
-        user.setId(1L);
-        user.setName("user");
-        user.setEmail("user@mail.ru");
+        List<User> users = createUsers();
+        User user = users.get(0);
+        User user2 = users.get(1);
 
-        User user2 = new User();
-        user2.setId(2L);
-        user2.setName("user2");
-        user2.setEmail("user2@mail.ru");
+        Item item = createItem(user);
 
-        Item item = new Item();
-        item.setId(1L);
-        item.setName("item");
-        item.setDescription("description");
-        item.setAvailable(true);
-        item.setOwner(user);
-
-        Booking booking = new Booking();
-        booking.setId(1L);
-        booking.setStart(LocalDateTime.now().minusDays(1));
-        booking.setEnd(LocalDateTime.now().plusDays(1));
-        booking.setItem(item);
-        booking.setBooker(user2);
+        Booking booking = createBooking(item, user2);
 
         when(bookingJpaRepository.existsById(any())).thenReturn(true);
         when(userJpaRepository.existsById(any())).thenReturn(true);
@@ -700,5 +497,38 @@ class BookingServiceImplTest {
         BookingResponseDto bookingResponseDto =
                 bookingService.getBookingOnlyForOwnerOrBooker(user.getId(), booking.getId());
         assertEquals(booking.getId(), bookingResponseDto.getId());
+    }
+    private List<User> createUsers() {
+        User user = new User();
+        user.setEmail("jane.doe@example.org");
+        user.setId(1L);
+        user.setName("Name");
+
+        User user2 = new User();
+        user2.setEmail("jane.doe@example.org");
+        user2.setId(2L);
+        user2.setName("Name");
+        List<User> listUsers = new ArrayList<>();
+        listUsers.add(user);
+        listUsers.add(user2);
+        return listUsers;
+    }
+    private Item createItem(User user) {
+        Item item = new Item();
+        item.setId(1L);
+        item.setName("item");
+        item.setDescription("description");
+        item.setAvailable(true);
+        item.setOwner(user);
+        return item;
+    }
+    private Booking createBooking(Item item, User user2) {
+        Booking booking = new Booking();
+        booking.setId(1L);
+        booking.setStart(LocalDateTime.now().minusDays(1));
+        booking.setEnd(LocalDateTime.now().plusDays(1));
+        booking.setItem(item);
+        booking.setBooker(user2);
+        return booking;
     }
 }

@@ -8,19 +8,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 
 class BookItemRequestDtoTest {
-    /**
-     * Methods under test:
-     *
-     * <ul>
-     *   <li>default or parameterless constructor of {@link BookItemRequestDto}
-     *   <li>{@link BookItemRequestDto#setEnd(LocalDateTime)}
-     *   <li>{@link BookItemRequestDto#setItemId(Long)}
-     *   <li>{@link BookItemRequestDto#setStart(LocalDateTime)}
-     *   <li>{@link BookItemRequestDto#getEnd()}
-     *   <li>{@link BookItemRequestDto#getItemId()}
-     *   <li>{@link BookItemRequestDto#getStart()}
-     * </ul>
-     */
+
     @Test
     void testConstructor() {
         BookItemRequestDto actualBookItemRequestDto = new BookItemRequestDto();

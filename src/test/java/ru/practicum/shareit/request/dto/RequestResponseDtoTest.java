@@ -11,9 +11,7 @@ import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.model.User;
 
 class RequestResponseDtoTest {
-    /**
-     * Method under test: {@link RequestResponseDto.ItemDto#toItemDtoFromItem(Item)}
-     */
+
     @Test
     void testItemDtoToItemDtoFromItem() {
         User user = new User();

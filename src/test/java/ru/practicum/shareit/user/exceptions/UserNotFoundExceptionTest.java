@@ -6,9 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 
 class UserNotFoundExceptionTest {
-    /**
-     * Method under test: {@link UserNotFoundException#UserNotFoundException(String)}
-     */
+
     @Test
     void testConstructor() {
         UserNotFoundException actualUserNotFoundException = new UserNotFoundException("An error occurred");

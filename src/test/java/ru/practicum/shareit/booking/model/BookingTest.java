@@ -11,25 +11,7 @@ import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.model.User;
 
 class BookingTest {
-    /**
-     * Methods under test:
-     *
-     * <ul>
-     *   <li>default or parameterless constructor of {@link Booking}
-     *   <li>{@link Booking#setBooker(User)}
-     *   <li>{@link Booking#setEnd(LocalDateTime)}
-     *   <li>{@link Booking#setId(Long)}
-     *   <li>{@link Booking#setItem(Item)}
-     *   <li>{@link Booking#setStart(LocalDateTime)}
-     *   <li>{@link Booking#setStatus(Booking.Status)}
-     *   <li>{@link Booking#getBooker()}
-     *   <li>{@link Booking#getEnd()}
-     *   <li>{@link Booking#getId()}
-     *   <li>{@link Booking#getItem()}
-     *   <li>{@link Booking#getStart()}
-     *   <li>{@link Booking#getStatus()}
-     * </ul>
-     */
+
     @Test
     void testConstructor() {
         Booking actualBooking = new Booking();

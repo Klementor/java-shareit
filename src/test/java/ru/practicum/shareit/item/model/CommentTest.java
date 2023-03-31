@@ -10,23 +10,7 @@ import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.model.User;
 
 class CommentTest {
-    /**
-     * Methods under test:
-     *
-     * <ul>
-     *   <li>default or parameterless constructor of {@link Comment}
-     *   <li>{@link Comment#setAuthor(User)}
-     *   <li>{@link Comment#setId(Long)}
-     *   <li>{@link Comment#setItem(Item)}
-     *   <li>{@link Comment#setText(String)}
-     *   <li>{@link Comment#setTime(LocalDateTime)}
-     *   <li>{@link Comment#getAuthor()}
-     *   <li>{@link Comment#getId()}
-     *   <li>{@link Comment#getItem()}
-     *   <li>{@link Comment#getText()}
-     *   <li>{@link Comment#getTime()}
-     * </ul>
-     */
+
     @Test
     void testConstructor() {
         Comment actualComment = new Comment();

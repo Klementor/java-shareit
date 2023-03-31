@@ -11,9 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UserMapperTest {
-    /**
-     * Method under test: {@link UserMapper#fromUserRequestDto(UserRequestDto)}
-     */
+
     @Test
     void testFromUserRequestDto() {
         User actualFromUserRequestDtoResult = UserMapper
@@ -22,38 +20,23 @@ class UserMapperTest {
         assertEquals("Name", actualFromUserRequestDtoResult.getName());
     }
 
-    /**
-     * Method under test: {@link UserMapper#toUserResponseDto(User)}
-     */
     @Test
     void testToUserResponseDto() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        User user = createUser();
         UserResponseDto actualToUserResponseDtoResult = UserMapper.toUserResponseDto(user);
         assertEquals("jane.doe@example.org", actualToUserResponseDtoResult.getEmail());
         assertEquals("Name", actualToUserResponseDtoResult.getName());
         assertEquals(1L, actualToUserResponseDtoResult.getId().longValue());
     }
 
-    /**
-     * Method under test: {@link UserMapper#toUserResponseDtoList(Collection)}
-     */
     @Test
     void testToUserResponseDtoList() {
         assertTrue(UserMapper.toUserResponseDtoList(new ArrayList<>()).isEmpty());
     }
 
-    /**
-     * Method under test: {@link UserMapper#toUserResponseDtoList(Collection)}
-     */
     @Test
-    void testToUserResponseDtoList2() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+    void testToUserResponseDtoListSecond() {
+        User user = createUser();
 
         ArrayList<User> userList = new ArrayList<>();
         userList.add(user);
@@ -65,15 +48,9 @@ class UserMapperTest {
         assertEquals(1L, getResult.getId().longValue());
     }
 
-    /**
-     * Method under test: {@link UserMapper#toUserResponseDtoList(Collection)}
-     */
     @Test
-    void testToUserResponseDtoList3() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+    void testToUserResponseDtoListThird() {
+        User user = createUser();
 
         User user1 = new User();
         user1.setEmail("john.smith@example.org");
@@ -93,6 +70,14 @@ class UserMapperTest {
         assertEquals("jane.doe@example.org", getResult1.getEmail());
         assertEquals(2L, getResult.getId().longValue());
         assertEquals("john.smith@example.org", getResult.getEmail());
+    }
+
+    private User createUser() {
+        User user = new User();
+        user.setEmail("jane.doe@example.org");
+        user.setId(1L);
+        user.setName("Name");
+        return user;
     }
 }
 

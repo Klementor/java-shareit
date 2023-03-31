@@ -1,12 +1,5 @@
 package ru.practicum.shareit.item.dto;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Comment;
@@ -14,40 +7,25 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.model.User;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 class ItemWithBookingsResponseDtoTest {
-    /**
-     * Method under test: {@link ItemWithBookingsResponseDto.BookingDto#fromBooking(Booking)}
-     */
+
     @Test
     void testBookingDtoFromBooking() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        List<User> listUsers = createUsers();
+        User user = listUsers.get(0);
+        User user1 = listUsers.get(1);
+        User user2 = listUsers.get(2);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        Request request = createRequest(user2);
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
-
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
-
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
 
         Booking booking = new Booking();
         booking.setBooker(user);
@@ -62,47 +40,21 @@ class ItemWithBookingsResponseDtoTest {
         assertEquals(1L, actualFromBookingResult.getId().longValue());
     }
 
-    /**
-     * Method under test: {@link ItemWithBookingsResponseDto.CommentDto#toListCommentDto(List)}
-     */
     @Test
     void testCommentDtoToListCommentDto() {
         assertTrue(ItemWithBookingsResponseDto.CommentDto.toListCommentDto(new ArrayList<>()).isEmpty());
     }
 
-    /**
-     * Method under test: {@link ItemWithBookingsResponseDto.CommentDto#toListCommentDto(List)}
-     */
     @Test
-    void testCommentDtoToListCommentDto2() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+    void testCommentDtoToListCommentDtoSecond() {
+        List<User> listUsers = createUsers();
+        User user = listUsers.get(0);
+        User user1 = listUsers.get(1);
+        User user2 = listUsers.get(2);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        Request request = createRequest(user2);
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
-
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
-
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
 
         Comment comment = new Comment();
         comment.setAuthor(user);
@@ -121,6 +73,48 @@ class ItemWithBookingsResponseDtoTest {
         assertEquals("Text", getResult.getText());
         assertEquals(1L, getResult.getId().longValue());
         assertEquals("0001-01-01", getResult.getCreated().toLocalDate().toString());
+    }
+
+    private List<User> createUsers() {
+        User user = new User();
+        user.setEmail("jane.doe@example.org");
+        user.setId(1L);
+        user.setName("Name");
+
+        User user1 = new User();
+        user1.setEmail("jane.doe@example.org");
+        user1.setId(2L);
+        user1.setName("Name");
+
+        User user2 = new User();
+        user2.setEmail("jane.doe@example.org");
+        user2.setId(3L);
+        user2.setName("Name");
+        List<User> listUsers = new ArrayList<>();
+        listUsers.add(user);
+        listUsers.add(user1);
+        listUsers.add(user2);
+        return listUsers;
+    }
+
+    private Item createItem(User user, Request request) {
+        Item item = new Item();
+        item.setAvailable(true);
+        item.setDescription("The characteristics of someone or something");
+        item.setId(1L);
+        item.setName("Name");
+        item.setOwner(user);
+        item.setRequest(request);
+        return item;
+    }
+
+    private Request createRequest(User user) {
+        Request request = new Request();
+        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
+        request.setDescription("The characteristics of someone or something");
+        request.setId(1L);
+        request.setRequester(user);
+        return request;
     }
 }
 

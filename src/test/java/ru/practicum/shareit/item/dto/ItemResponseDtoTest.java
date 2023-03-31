@@ -6,23 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 class ItemResponseDtoTest {
-    /**
-     * Methods under test:
-     *
-     * <ul>
-     *   <li>{@link ItemResponseDto#ItemResponseDto()}
-     *   <li>{@link ItemResponseDto#setAvailable(Boolean)}
-     *   <li>{@link ItemResponseDto#setDescription(String)}
-     *   <li>{@link ItemResponseDto#setId(Long)}
-     *   <li>{@link ItemResponseDto#setName(String)}
-     *   <li>{@link ItemResponseDto#setRequestId(Long)}
-     *   <li>{@link ItemResponseDto#getAvailable()}
-     *   <li>{@link ItemResponseDto#getDescription()}
-     *   <li>{@link ItemResponseDto#getId()}
-     *   <li>{@link ItemResponseDto#getName()}
-     *   <li>{@link ItemResponseDto#getRequestId()}
-     * </ul>
-     */
+
     @Test
     void testConstructor() {
         ItemResponseDto actualItemResponseDto = new ItemResponseDto();
@@ -38,25 +22,8 @@ class ItemResponseDtoTest {
         assertEquals(1L, actualItemResponseDto.getRequestId().longValue());
     }
 
-    /**
-     * Methods under test:
-     *
-     * <ul>
-     *   <li>{@link ItemResponseDto#ItemResponseDto(Long, String, String, Boolean, Long)}
-     *   <li>{@link ItemResponseDto#setAvailable(Boolean)}
-     *   <li>{@link ItemResponseDto#setDescription(String)}
-     *   <li>{@link ItemResponseDto#setId(Long)}
-     *   <li>{@link ItemResponseDto#setName(String)}
-     *   <li>{@link ItemResponseDto#setRequestId(Long)}
-     *   <li>{@link ItemResponseDto#getAvailable()}
-     *   <li>{@link ItemResponseDto#getDescription()}
-     *   <li>{@link ItemResponseDto#getId()}
-     *   <li>{@link ItemResponseDto#getName()}
-     *   <li>{@link ItemResponseDto#getRequestId()}
-     * </ul>
-     */
     @Test
-    void testConstructor2() {
+    void testConstructorSecond() {
         ItemResponseDto actualItemResponseDto = new ItemResponseDto(1L, "Name",
                 "The characteristics of someone or something", true, 1L);
         actualItemResponseDto.setAvailable(true);

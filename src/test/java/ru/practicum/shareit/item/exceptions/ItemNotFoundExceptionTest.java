@@ -6,9 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 
 class ItemNotFoundExceptionTest {
-    /**
-     * Method under test: {@link ItemNotFoundException#ItemNotFoundException(String)}
-     */
+
     @Test
     void testConstructor() {
         ItemNotFoundException actualItemNotFoundException = new ItemNotFoundException("An error occurred");

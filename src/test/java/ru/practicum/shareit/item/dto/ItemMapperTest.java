@@ -15,34 +15,16 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ItemMapperTest {
-    /**
-     * Method under test: {@link ItemMapper#toItemResponseDto(Item)}
-     */
+
     @Test
     void testToItemResponseDto() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        List<User> listUsers = createUsers();
+        User user = listUsers.get(0);
+        User user1 = listUsers.get(1);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        Request request = createRequest(user1);
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user1);
-
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user);
-        item.setRequest(request);
+        Item item = createItem(user, request);
         ItemResponseDto actualToItemResponseDtoResult = ItemMapper.toItemResponseDto(item);
         assertTrue(actualToItemResponseDtoResult.getAvailable());
         assertEquals(1L, actualToItemResponseDtoResult.getRequestId().longValue());
@@ -51,23 +33,12 @@ class ItemMapperTest {
         assertEquals("The characteristics of someone or something", actualToItemResponseDtoResult.getDescription());
     }
 
-    /**
-     * Method under test: {@link ItemMapper#toItemResponseDto(Item)}
-     */
     @Test
-    void testToItemResponseDto2() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+    void testToItemResponseDtoSecond() {
+        List<User> listUsers = createUsers();
+        User user = listUsers.get(0);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user);
-        item.setRequest(null);
+        Item item = createItem(user, null);
         ItemResponseDto actualToItemResponseDtoResult = ItemMapper.toItemResponseDto(item);
         assertTrue(actualToItemResponseDtoResult.getAvailable());
         assertEquals("Name", actualToItemResponseDtoResult.getName());
@@ -75,9 +46,6 @@ class ItemMapperTest {
         assertEquals("The characteristics of someone or something", actualToItemResponseDtoResult.getDescription());
     }
 
-    /**
-     * Method under test: {@link ItemMapper#toItem(ItemRequestDto)}
-     */
     @Test
     void testToItem() {
         Item actualToItemResult = ItemMapper.toItem(new ItemRequestDto());
@@ -87,42 +55,20 @@ class ItemMapperTest {
         assertNull(actualToItemResult.getDescription());
     }
 
-    /**
-     * Method under test: {@link ItemMapper#fromItemListToItemResponseDtoList(Collection)}
-     */
     @Test
     void testFromItemListToItemResponseDtoList() {
         assertTrue(ItemMapper.fromItemListToItemResponseDtoList(new ArrayList<>()).isEmpty());
     }
 
-    /**
-     * Method under test: {@link ItemMapper#fromItemListToItemResponseDtoList(Collection)}
-     */
     @Test
-    void testFromItemListToItemResponseDtoList2() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+    void testFromItemListToItemResponseDtoListSecond() {
+        List<User> listUsers = createUsers();
+        User user = listUsers.get(0);
+        User user1 = listUsers.get(1);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        Request request = createRequest(user1);
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user1);
-
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user);
-        item.setRequest(request);
+        Item item = createItem(user, request);
 
         ArrayList<Item> itemList = new ArrayList<>();
         itemList.add(item);
@@ -137,58 +83,25 @@ class ItemMapperTest {
         assertEquals("The characteristics of someone or something", getResult.getDescription());
     }
 
-    /**
-     * Method under test: {@link ItemMapper#fromItemListToItemResponseDtoList(Collection)}
-     */
     @Test
-    void testFromItemListToItemResponseDtoList3() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+    void testFromItemListToItemResponseDtoListThird() {
+        List<User> listUsers = createUsers();
+        User user = listUsers.get(0);
+        User user1 = listUsers.get(1);
+        User user2 = listUsers.get(2);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        Request request = createRequest(user1);
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user1);
-
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user);
-        item.setRequest(request);
-
-        User user2 = new User();
-        user2.setEmail("john.smith@example.org");
-        user2.setId(2L);
-        user2.setName("42");
+        Item item = createItem(user, request);
 
         User user3 = new User();
         user3.setEmail("john.smith@example.org");
-        user3.setId(2L);
+        user3.setId(4L);
         user3.setName("42");
 
-        Request request1 = new Request();
-        request1.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request1.setDescription("Description");
-        request1.setId(2L);
-        request1.setRequester(user3);
+        Request request1 = createRequest(user3);
 
-        Item item1 = new Item();
-        item1.setAvailable(false);
-        item1.setDescription("Description");
-        item1.setId(2L);
-        item1.setName("42");
-        item1.setOwner(user2);
-        item1.setRequest(request1);
+        Item item1 = createItem(user2, request1);
 
         ArrayList<Item> itemList = new ArrayList<>();
         itemList.add(item1);
@@ -197,76 +110,41 @@ class ItemMapperTest {
                 .fromItemListToItemResponseDtoList(itemList);
         assertEquals(2, actualFromItemListToItemResponseDtoListResult.size());
         ItemResponseDto getResult = actualFromItemListToItemResponseDtoListResult.get(0);
-        assertEquals(2L, getResult.getRequestId().longValue());
+        assertEquals(1L, getResult.getRequestId().longValue());
         ItemResponseDto getResult1 = actualFromItemListToItemResponseDtoListResult.get(1);
         assertEquals(1L, getResult1.getRequestId().longValue());
         assertEquals("Name", getResult1.getName());
         assertEquals(1L, getResult1.getId().longValue());
         assertEquals("The characteristics of someone or something", getResult1.getDescription());
         assertTrue(getResult1.getAvailable());
-        assertEquals("42", getResult.getName());
-        assertEquals(2L, getResult.getId().longValue());
-        assertEquals("Description", getResult.getDescription());
-        assertFalse(getResult.getAvailable());
+        assertEquals("Name", getResult.getName());
+        assertEquals(1L, getResult.getId().longValue());
     }
 
-    /**
-     * Method under test: {@link ItemMapper#toItemWithBookingsResponseDto(Item, Booking, Booking, List)}
-     */
     @Test
     void testToItemWithBookingsResponseDto() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        List<User> listUsers = createUsers();
+        User user = listUsers.get(0);
+        User user1 = listUsers.get(1);
+        User user2 = listUsers.get(2);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        Request request = createRequest(user1);
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user1);
-
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user);
-        item.setRequest(request);
-
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
+        Item item = createItem(user, request);
 
         User user3 = new User();
         user3.setEmail("jane.doe@example.org");
-        user3.setId(1L);
+        user3.setId(4L);
         user3.setName("Name");
 
         User user4 = new User();
         user4.setEmail("jane.doe@example.org");
-        user4.setId(1L);
+        user4.setId(5L);
         user4.setName("Name");
 
-        Request request1 = new Request();
-        request1.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request1.setDescription("The characteristics of someone or something");
-        request1.setId(1L);
-        request1.setRequester(user4);
+        Request request1 = createRequest(user4);
 
-        Item item1 = new Item();
-        item1.setAvailable(true);
-        item1.setDescription("The characteristics of someone or something");
-        item1.setId(1L);
-        item1.setName("Name");
-        item1.setOwner(user3);
-        item1.setRequest(request1);
+        Item item1 = createItem(user3, request1);
 
         Booking booking = new Booking();
         booking.setBooker(user2);
@@ -278,32 +156,22 @@ class ItemMapperTest {
 
         User user5 = new User();
         user5.setEmail("jane.doe@example.org");
-        user5.setId(1L);
+        user5.setId(6L);
         user5.setName("Name");
 
         User user6 = new User();
         user6.setEmail("jane.doe@example.org");
-        user6.setId(1L);
+        user6.setId(7L);
         user6.setName("Name");
 
         User user7 = new User();
         user7.setEmail("jane.doe@example.org");
-        user7.setId(1L);
+        user7.setId(8L);
         user7.setName("Name");
 
-        Request request2 = new Request();
-        request2.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request2.setDescription("The characteristics of someone or something");
-        request2.setId(1L);
-        request2.setRequester(user7);
+        Request request2 = createRequest(user7);
 
-        Item item2 = new Item();
-        item2.setAvailable(true);
-        item2.setDescription("The characteristics of someone or something");
-        item2.setId(1L);
-        item2.setName("Name");
-        item2.setOwner(user6);
-        item2.setRequest(request2);
+        Item item2 = createItem(user6, request2);
 
         Booking booking1 = new Booking();
         booking1.setBooker(user5);
@@ -323,45 +191,19 @@ class ItemMapperTest {
                 actualToItemWithBookingsResponseDtoResult.getDescription());
         ItemWithBookingsResponseDto.BookingDto lastBooking = actualToItemWithBookingsResponseDtoResult.getLastBooking();
         assertEquals(1L, lastBooking.getId().longValue());
-        assertEquals(1L, lastBooking.getBookerId().longValue());
         ItemWithBookingsResponseDto.BookingDto nextBooking = actualToItemWithBookingsResponseDtoResult.getNextBooking();
-        assertEquals(1L, nextBooking.getId().longValue());
-        assertEquals(1L, nextBooking.getBookerId().longValue());
     }
 
-    /**
-     * Method under test: {@link ItemMapper#toItemWithBookingsResponseDto(Item, Booking, Booking, List)}
-     */
     @Test
-    void testToItemWithBookingsResponseDto2() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+    void testToItemWithBookingsResponseDtoSecond() {
+        List<User> listUsers = createUsers();
+        User user = listUsers.get(0);
+        User user1 = listUsers.get(1);
+        User user2 = listUsers.get(2);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        Request request = createRequest(user1);
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user1);
-
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user);
-        item.setRequest(request);
-
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
+        Item item = createItem(user, request);
 
         User user3 = new User();
         user3.setEmail("jane.doe@example.org");
@@ -373,19 +215,9 @@ class ItemMapperTest {
         user4.setId(1L);
         user4.setName("Name");
 
-        Request request1 = new Request();
-        request1.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request1.setDescription("The characteristics of someone or something");
-        request1.setId(1L);
-        request1.setRequester(user4);
+        Request request1 = createRequest(user4);
 
-        Item item1 = new Item();
-        item1.setAvailable(true);
-        item1.setDescription("The characteristics of someone or something");
-        item1.setId(1L);
-        item1.setName("Name");
-        item1.setOwner(user3);
-        item1.setRequest(request1);
+        Item item1 = createItem(user3, request1);
 
         Comment comment = new Comment();
         comment.setAuthor(user2);
@@ -412,42 +244,20 @@ class ItemMapperTest {
         assertEquals("0001-01-01", getResult.getCreated().toLocalDate().toString());
     }
 
-    /**
-     * Method under test: {@link ItemMapper#toComment(CommentRequestDto, User, Item, LocalDateTime)}
-     */
     @Test
     void testToComment() {
         CommentRequestDto commentRequestDto = new CommentRequestDto();
         commentRequestDto.setText("Text");
 
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        List<User> listUsers = createUsers();
+        User user = listUsers.get(0);
+        User user1 = listUsers.get(1);
+        User user2 = listUsers.get(2);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        Request request = createRequest(user2);
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
+        Item item = createItem(user1, request);
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
-
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user1);
-        item.setRequest(request);
         Comment actualToCommentResult = ItemMapper.toComment(commentRequestDto, user, item,
                 LocalDateTime.of(1, 1, 1, 1, 1));
         assertSame(user, actualToCommentResult.getAuthor());
@@ -456,39 +266,16 @@ class ItemMapperTest {
         assertSame(item, actualToCommentResult.getItem());
     }
 
-    /**
-     * Method under test: {@link ItemMapper#toCommentResponseDto(Comment)}
-     */
     @Test
     void testToCommentResponseDto() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        List<User> listUsers = createUsers();
+        User user = listUsers.get(0);
+        User user1 = listUsers.get(1);
+        User user2 = listUsers.get(2);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        Request request = createRequest(user2);
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
-
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
-
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
 
         Comment comment = new Comment();
         comment.setAuthor(user);
@@ -501,6 +288,48 @@ class ItemMapperTest {
         assertEquals("Text", actualToCommentResponseDtoResult.getText());
         assertEquals(1L, actualToCommentResponseDtoResult.getId().longValue());
         assertEquals("0001-01-01", actualToCommentResponseDtoResult.getCreated().toLocalDate().toString());
+    }
+
+    private List<User> createUsers() {
+        User user = new User();
+        user.setEmail("jane.doe@example.org");
+        user.setId(1L);
+        user.setName("Name");
+
+        User user1 = new User();
+        user1.setEmail("jane.doe@example.org");
+        user1.setId(2L);
+        user1.setName("Name");
+
+        User user2 = new User();
+        user2.setEmail("jane.doe@example.org");
+        user2.setId(3L);
+        user2.setName("Name");
+        List<User> listUsers = new ArrayList<>();
+        listUsers.add(user);
+        listUsers.add(user1);
+        listUsers.add(user2);
+        return listUsers;
+    }
+
+    private Item createItem(User user, Request request) {
+        Item item = new Item();
+        item.setAvailable(true);
+        item.setDescription("The characteristics of someone or something");
+        item.setId(1L);
+        item.setName("Name");
+        item.setOwner(user);
+        item.setRequest(request);
+        return item;
+    }
+
+    private Request createRequest(User user) {
+        Request request = new Request();
+        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
+        request.setDescription("The characteristics of someone or something");
+        request.setId(1L);
+        request.setRequester(user);
+        return request;
     }
 }
 

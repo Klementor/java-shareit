@@ -9,21 +9,7 @@ import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.user.model.User;
 
 class RequestTest {
-    /**
-     * Methods under test:
-     *
-     * <ul>
-     *   <li>default or parameterless constructor of {@link Request}
-     *   <li>{@link Request#setDateTimeOfCreate(LocalDateTime)}
-     *   <li>{@link Request#setDescription(String)}
-     *   <li>{@link Request#setId(Long)}
-     *   <li>{@link Request#setRequester(User)}
-     *   <li>{@link Request#getDateTimeOfCreate()}
-     *   <li>{@link Request#getDescription()}
-     *   <li>{@link Request#getId()}
-     *   <li>{@link Request#getRequester()}
-     * </ul>
-     */
+
     @Test
     void testConstructor() {
         Request actualRequest = new Request();

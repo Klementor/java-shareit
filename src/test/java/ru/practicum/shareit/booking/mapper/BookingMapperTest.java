@@ -10,15 +10,15 @@ import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class BookingMapperTest {
-    /**
-     * Method under test: {@link BookingMapper#toBooking(BookItemRequestDto, User, Item)}
-     */
+
     @Test
     void testToBooking() {
         BookItemRequestDto bookItemRequestDto = new BookItemRequestDto();
@@ -26,34 +26,15 @@ class BookingMapperTest {
         bookItemRequestDto.setItemId(1L);
         bookItemRequestDto.setStart(LocalDateTime.of(1, 1, 1, 1, 1));
 
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        List<User> listUsers = createUsers();
+        User user = listUsers.get(0);
+        User user1 = listUsers.get(1);
+        User user2 = listUsers.get(2);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        Request request = createRequest(user2);
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
+        Item item = createItem(user1, request);
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
-
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user1);
-        item.setRequest(request);
         Booking actualToBookingResult = BookingMapper.toBooking(bookItemRequestDto, user, item);
         assertSame(user, actualToBookingResult.getBooker());
         assertEquals(Booking.Status.WAITING, actualToBookingResult.getStatus());
@@ -62,39 +43,16 @@ class BookingMapperTest {
         assertEquals("01:01", actualToBookingResult.getStart().toLocalTime().toString());
     }
 
-    /**
-     * Method under test: {@link BookingMapper#toBookingResponseDto(Booking)}
-     */
     @Test
     void testToBookingResponseDto() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        List<User> listUsers = createUsers();
+        User user = listUsers.get(0);
+        User user1 = listUsers.get(1);
+        User user2 = listUsers.get(2);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        Request request = createRequest(user2);
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
-
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
-
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
 
         Booking booking = new Booking();
         booking.setBooker(user);
@@ -114,39 +72,16 @@ class BookingMapperTest {
         assertEquals(1L, actualToBookingResponseDtoResult.getBooker().getId().longValue());
     }
 
-    /**
-     * Method under test: {@link BookingMapper#toListBookingResponseDto(Iterable)}
-     */
     @Test
     void testToListBookingResponseDto() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        List<User> listUsers = createUsers();
+        User user = listUsers.get(0);
+        User user1 = listUsers.get(1);
+        User user2 = listUsers.get(2);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        Request request = createRequest(user2);
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
-
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
-
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
 
         Booking booking = new Booking();
         booking.setBooker(user);
@@ -161,15 +96,52 @@ class BookingMapperTest {
         assertEquals(1, BookingMapper.toListBookingResponseDto(bookingSet).size());
     }
 
-    /**
-     * Method under test: {@link BookingMapper#toListBookingResponseDto(Iterable)}
-     */
+
     @Test
-    void testToListBookingResponseDto2() {
+    void testToListBookingResponseDtoSecond() {
         Iterable<Booking> iterable = (Iterable<Booking>) mock(Iterable.class);
         when(iterable.iterator()).thenReturn(MappingIterator.emptyIterator());
         assertTrue(BookingMapper.toListBookingResponseDto(iterable).isEmpty());
         verify(iterable).iterator();
+    }
+    private List<User> createUsers() {
+        User user = new User();
+        user.setEmail("jane.doe@example.org");
+        user.setId(1L);
+        user.setName("Name");
+
+        User user1 = new User();
+        user1.setEmail("jane.doe@example.org");
+        user1.setId(1L);
+        user1.setName("Name");
+
+        User user2 = new User();
+        user2.setEmail("jane.doe@example.org");
+        user2.setId(1L);
+        user2.setName("Name");
+        List<User> listUsers = new ArrayList<>();
+        listUsers.add(user);
+        listUsers.add(user1);
+        listUsers.add(user2);
+        return listUsers;
+    }
+    private Request createRequest(User user2) {
+        Request request = new Request();
+        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
+        request.setDescription("The characteristics of someone or something");
+        request.setId(1L);
+        request.setRequester(user2);
+        return request;
+    }
+    private Item createItem(User user1, Request request) {
+        Item item = new Item();
+        item.setAvailable(true);
+        item.setDescription("The characteristics of someone or something");
+        item.setId(1L);
+        item.setName("Name");
+        item.setOwner(user1);
+        item.setRequest(request);
+        return item;
     }
 }
 

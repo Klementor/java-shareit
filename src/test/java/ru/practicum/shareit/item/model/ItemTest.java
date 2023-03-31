@@ -11,25 +11,7 @@ import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.model.User;
 
 class ItemTest {
-    /**
-     * Methods under test:
-     *
-     * <ul>
-     *   <li>default or parameterless constructor of {@link Item}
-     *   <li>{@link Item#setAvailable(Boolean)}
-     *   <li>{@link Item#setDescription(String)}
-     *   <li>{@link Item#setId(Long)}
-     *   <li>{@link Item#setName(String)}
-     *   <li>{@link Item#setOwner(User)}
-     *   <li>{@link Item#setRequest(Request)}
-     *   <li>{@link Item#getAvailable()}
-     *   <li>{@link Item#getDescription()}
-     *   <li>{@link Item#getId()}
-     *   <li>{@link Item#getName()}
-     *   <li>{@link Item#getOwner()}
-     *   <li>{@link Item#getRequest()}
-     * </ul>
-     */
+
     @Test
     void testConstructor() {
         Item actualItem = new Item();

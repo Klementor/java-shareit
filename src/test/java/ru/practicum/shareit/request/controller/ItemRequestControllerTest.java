@@ -32,9 +32,6 @@ class ItemRequestControllerTest {
     @MockBean
     private RequestService requestService;
 
-    /**
-     * Method under test: {@link ItemRequestController#getAllItemRequests(Integer, Integer, Long)}
-     */
     @Test
     void testGetAllItemRequests() throws Exception {
         when(requestService.getAllItemRequests((Integer) any(), (Integer) any(), (Long) any()))
@@ -51,9 +48,6 @@ class ItemRequestControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string("[]"));
     }
 
-    /**
-     * Method under test: {@link ItemRequestController#getItemRequestById(Long, Long)}
-     */
     @Test
     void testGetItemRequestById() throws Exception {
         RequestResponseDto requestResponseDto = new RequestResponseDto();
@@ -75,9 +69,6 @@ class ItemRequestControllerTest {
                                         + "\"items\":[]}"));
     }
 
-    /**
-     * Method under test: {@link ItemRequestController#getItemRequestsByRequesterId(Long)}
-     */
     @Test
     void testGetItemRequestsByRequesterId() throws Exception {
         when(requestService.getItemRequestByRequesterId((Long) any())).thenReturn(new ArrayList<>());
@@ -91,9 +82,6 @@ class ItemRequestControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string("[]"));
     }
 
-    /**
-     * Method under test: {@link ItemRequestController#postNewItemRequest(RequestDto, Long)}
-     */
     @Test
     void testPostNewItemRequest() throws Exception {
         when(requestService.getItemRequestByRequesterId((Long) any())).thenReturn(new ArrayList<>());

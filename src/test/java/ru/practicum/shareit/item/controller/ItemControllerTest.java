@@ -37,9 +37,6 @@ class ItemControllerTest {
     @MockBean
     private ItemService itemService;
 
-    /**
-     * Method under test: {@link ItemController#updateItem(Long, ItemRequestDto, Long)}
-     */
     @Test
     void testUpdateItem() throws Exception {
         when(itemService.updateItem((Long) any(), (ItemRequestDto) any(), (Long) any()))
@@ -65,9 +62,6 @@ class ItemControllerTest {
                         .string("{\"id\":null,\"name\":null,\"description\":null,\"available\":null,\"requestId\":null}"));
     }
 
-    /**
-     * Method under test: {@link ItemController#createItem(ItemRequestDto, Long)}
-     */
     @Test
     void testCreateItem() throws Exception {
         when(itemService.getUserItems((Long) any())).thenReturn(new ArrayList<>());
@@ -91,9 +85,6 @@ class ItemControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string("[]"));
     }
 
-    /**
-     * Method under test: {@link ItemController#getItemById(Long, Long)}
-     */
     @Test
     void testGetItemById() throws Exception {
         when(itemService.getItemById((Long) any(), (Long) any())).thenReturn(new ItemWithBookingsResponseDto());
@@ -110,11 +101,8 @@ class ItemControllerTest {
                                         + "\"comments\":null}"));
     }
 
-    /**
-     * Method under test: {@link ItemController#getItemById(Long, Long)}
-     */
     @Test
-    void testGetItemById2() throws Exception {
+    void testGetItemByIdTwo() throws Exception {
         when(itemService.getUserItems((Long) any())).thenReturn(new ArrayList<>());
         when(itemService.getItemById((Long) any(), (Long) any())).thenReturn(new ItemWithBookingsResponseDto());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/items/{itemId}", "", "Uri Variables")
@@ -127,9 +115,6 @@ class ItemControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string("[]"));
     }
 
-    /**
-     * Method under test: {@link ItemController#getUserItems(Long)}
-     */
     @Test
     void testGetUserItems() throws Exception {
         when(itemService.getUserItems((Long) any())).thenReturn(new ArrayList<>());
@@ -143,9 +128,6 @@ class ItemControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string("[]"));
     }
 
-    /**
-     * Method under test: {@link ItemController#searchItemsByText(String, Long)}
-     */
     @Test
     void testSearchItemsByText() throws Exception {
         when(itemService.searchItemsByText((String) any(), (Long) any())).thenReturn(new ArrayList<>());
@@ -160,9 +142,6 @@ class ItemControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string("[]"));
     }
 
-    /**
-     * Method under test: {@link ItemController#postComment(Long, Long, CommentRequestDto)}
-     */
     @Test
     void testPostComment() throws Exception {
         CommentResponseDto commentResponseDto = new CommentResponseDto();
@@ -189,11 +168,8 @@ class ItemControllerTest {
                         .string("{\"id\":1,\"text\":\"Text\",\"authorName\":\"JaneDoe\",\"created\":[1,1,1,1,1]}"));
     }
 
-    /**
-     * Method under test: {@link ItemController#postComment(Long, Long, CommentRequestDto)}
-     */
     @Test
-    void testPostComment2() throws Exception {
+    void testPostCommentSecond() throws Exception {
         CommentResponseDto commentResponseDto = new CommentResponseDto();
         commentResponseDto.setAuthorName("JaneDoe");
         commentResponseDto.setCreated(LocalDateTime.of(1, 1, 1, 1, 1));

@@ -5,15 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 class RequestDtoTest {
-    /**
-     * Methods under test:
-     *
-     * <ul>
-     *   <li>default or parameterless constructor of {@link RequestDto}
-     *   <li>{@link RequestDto#setDescription(String)}
-     *   <li>{@link RequestDto#getDescription()}
-     * </ul>
-     */
+
     @Test
     void testConstructor() {
         RequestDto actualRequestDto = new RequestDto();

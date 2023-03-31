@@ -50,41 +50,19 @@ class ItemServiceImplTest {
     @MockBean
     private UserJpaRepository userJpaRepository;
 
-    /**
-     * Method under test: {@link ItemServiceImpl#addItem(ItemRequestDto, Long)}
-     */
     @Test
     void testAddItem() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        User user = createUser();
         when(userJpaRepository.getReferenceById((Long) any())).thenReturn(user);
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        User user1 = createUser();
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
+        User user2 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
+        Request request = createRequest(user2);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
         when(itemJpaRepository.save((Item) any())).thenReturn(item);
         ItemResponseDto actualAddItemResult = itemServiceImpl.addItem(new ItemRequestDto(), 1L);
         assertTrue(actualAddItemResult.getAvailable());
@@ -97,15 +75,9 @@ class ItemServiceImplTest {
         verify(itemJpaRepository).save((Item) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#addItem(ItemRequestDto, Long)}
-     */
     @Test
-    void testAddItem2() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+    void testAddItemSecond() {
+        User user = createUser();
         when(userJpaRepository.getReferenceById((Long) any())).thenReturn(user);
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
         when(itemJpaRepository.save((Item) any())).thenThrow(new NotFoundException("An error occurred"));
@@ -115,86 +87,39 @@ class ItemServiceImplTest {
         verify(itemJpaRepository).save((Item) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#addItem(ItemRequestDto, Long)}
-     */
     @Test
-    void testAddItem3() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+    void testAddItemThird() {
+        User user = createUser();
         when(userJpaRepository.getReferenceById((Long) any())).thenReturn(user);
         when(userJpaRepository.existsById((Long) any())).thenReturn(false);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        User user1 = createUser();
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
+        User user2 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
+        Request request = createRequest(user2);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
         when(itemJpaRepository.save((Item) any())).thenReturn(item);
         assertThrows(UserNotFoundException.class, () -> itemServiceImpl.addItem(new ItemRequestDto(), 1L));
         verify(userJpaRepository).existsById((Long) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#updateItem(Long, ItemRequestDto, Long)}
-     */
     @Test
     void testUpdateItem() {
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
 
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        User user = createUser();
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        User user1 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user1);
+        Request request = createRequest(user1);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user);
-        item.setRequest(request);
+        Item item = createItem(user, request);
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
+        User user2 = createUser();
 
-        User user3 = new User();
-        user3.setEmail("jane.doe@example.org");
-        user3.setId(1L);
-        user3.setName("Name");
+        User user3 = createUser();
 
         Request request1 = new Request();
         request1.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
@@ -202,13 +127,7 @@ class ItemServiceImplTest {
         request1.setId(1L);
         request1.setRequester(user3);
 
-        Item item1 = new Item();
-        item1.setAvailable(true);
-        item1.setDescription("The characteristics of someone or something");
-        item1.setId(1L);
-        item1.setName("Name");
-        item1.setOwner(user2);
-        item1.setRequest(request1);
+        Item item1 = createItem(user2, request1);
         when(itemJpaRepository.save((Item) any())).thenReturn(item1);
         when(itemJpaRepository.getReferenceById((Long) any())).thenReturn(item);
         when(itemJpaRepository.existsById((Long) any())).thenReturn(true);
@@ -224,36 +143,17 @@ class ItemServiceImplTest {
         verify(itemJpaRepository).save((Item) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#updateItem(Long, ItemRequestDto, Long)}
-     */
     @Test
-    void testUpdateItem2() {
+    void testUpdateItemSecond() {
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
 
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        User user = createUser();
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        User user1 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user1);
+        Request request = createRequest(user1);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user);
-        item.setRequest(request);
+        Item item = createItem(user, request);
         when(itemJpaRepository.save((Item) any())).thenThrow(new NotFoundException("An error occurred"));
         when(itemJpaRepository.getReferenceById((Long) any())).thenReturn(item);
         when(itemJpaRepository.existsById((Long) any())).thenReturn(true);
@@ -264,60 +164,25 @@ class ItemServiceImplTest {
         verify(itemJpaRepository).save((Item) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#updateItem(Long, ItemRequestDto, Long)}
-     */
     @Test
-    void testUpdateItem3() {
+    void testUpdateItemThird() {
         when(userJpaRepository.existsById((Long) any())).thenReturn(false);
 
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        User user = createUser();
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        User user1 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user1);
+        Request request = createRequest(user1);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user);
-        item.setRequest(request);
+        Item item = createItem(user, request);
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
+        User user2 = createUser();
 
-        User user3 = new User();
-        user3.setEmail("jane.doe@example.org");
-        user3.setId(1L);
-        user3.setName("Name");
+        User user3 = createUser();
 
-        Request request1 = new Request();
-        request1.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request1.setDescription("The characteristics of someone or something");
-        request1.setId(1L);
-        request1.setRequester(user3);
+        Request request1 = createRequest(user3);
 
-        Item item1 = new Item();
-        item1.setAvailable(true);
-        item1.setDescription("The characteristics of someone or something");
-        item1.setId(1L);
-        item1.setName("Name");
-        item1.setOwner(user2);
-        item1.setRequest(request1);
+        Item item1 = createItem(user2, request1);
         when(itemJpaRepository.save((Item) any())).thenReturn(item1);
         when(itemJpaRepository.getReferenceById((Long) any())).thenReturn(item);
         when(itemJpaRepository.existsById((Long) any())).thenReturn(true);
@@ -326,114 +191,46 @@ class ItemServiceImplTest {
         verify(itemJpaRepository).existsById((Long) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#getItemById(Long, Long)}
-     */
     @Test
     void testGetItemById() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        User user = createUser();
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        User user1 = createUser();
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
+        User user2 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
+        Request request = createRequest(user2);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
 
-        Booking booking = new Booking();
-        booking.setBooker(user);
-        booking.setEnd(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking.setId(1L);
-        booking.setItem(item);
-        booking.setStart(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking.setStatus(Booking.Status.WAITING);
+        Booking booking = createBooking(user, item);
         Optional<Booking> ofResult = Optional.of(booking);
 
-        User user3 = new User();
-        user3.setEmail("jane.doe@example.org");
-        user3.setId(1L);
-        user3.setName("Name");
+        User user3 = createUser();
 
-        User user4 = new User();
-        user4.setEmail("jane.doe@example.org");
-        user4.setId(1L);
-        user4.setName("Name");
+        User user4 = createUser();
 
-        User user5 = new User();
-        user5.setEmail("jane.doe@example.org");
-        user5.setId(1L);
-        user5.setName("Name");
+        User user5 = createUser();
 
-        Request request1 = new Request();
-        request1.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request1.setDescription("The characteristics of someone or something");
-        request1.setId(1L);
-        request1.setRequester(user5);
+        Request request1 = createRequest(user5);
 
-        Item item1 = new Item();
-        item1.setAvailable(true);
-        item1.setDescription("The characteristics of someone or something");
-        item1.setId(1L);
-        item1.setName("Name");
-        item1.setOwner(user4);
-        item1.setRequest(request1);
+        Item item1 = createItem(user4, request1);
 
-        Booking booking1 = new Booking();
-        booking1.setBooker(user3);
-        booking1.setEnd(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking1.setId(1L);
-        booking1.setItem(item1);
-        booking1.setStart(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking1.setStatus(Booking.Status.WAITING);
+        Booking booking1 = createBooking(user3, item1);
+
         Optional<Booking> ofResult1 = Optional.of(booking1);
         when(bookingJpaRepository.findFirstByItemIdAndEndIsBeforeOrderByEndDesc((Long) any(), (LocalDateTime) any()))
                 .thenReturn(ofResult);
         when(bookingJpaRepository.findFirstByItemIdAndStartIsAfterOrderByStart((Long) any(), (LocalDateTime) any()))
                 .thenReturn(ofResult1);
 
-        User user6 = new User();
-        user6.setEmail("jane.doe@example.org");
-        user6.setId(1L);
-        user6.setName("Name");
+        User user6 = createUser();
 
-        User user7 = new User();
-        user7.setEmail("jane.doe@example.org");
-        user7.setId(1L);
-        user7.setName("Name");
+        User user7 = createUser();
 
-        Request request2 = new Request();
-        request2.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request2.setDescription("The characteristics of someone or something");
-        request2.setId(1L);
-        request2.setRequester(user7);
+        Request request2 = createRequest(user7);
 
-        Item item2 = new Item();
-        item2.setAvailable(true);
-        item2.setDescription("The characteristics of someone or something");
-        item2.setId(1L);
-        item2.setName("Name");
-        item2.setOwner(user6);
-        item2.setRequest(request2);
+        Item item2 = createItem(user6, request2);
         when(itemJpaRepository.getReferenceById((Long) any())).thenReturn(item2);
         when(itemJpaRepository.existsById((Long) any())).thenReturn(true);
         ArrayList<Comment> commentList = new ArrayList<>();
@@ -457,114 +254,45 @@ class ItemServiceImplTest {
         verify(commentJpaRepository).findAllByItemId((Long) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#getItemById(Long, Long)}
-     */
     @Test
-    void testGetItemById2() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+    void testGetItemByIdSecond() {
+        User user = createUser();
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        User user1 = createUser();
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
+        User user2 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
+        Request request = createRequest(user2);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
 
-        Booking booking = new Booking();
-        booking.setBooker(user);
-        booking.setEnd(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking.setId(1L);
-        booking.setItem(item);
-        booking.setStart(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking.setStatus(Booking.Status.WAITING);
+        Booking booking = createBooking(user, item);
         Optional<Booking> ofResult = Optional.of(booking);
 
-        User user3 = new User();
-        user3.setEmail("jane.doe@example.org");
-        user3.setId(1L);
-        user3.setName("Name");
+        User user3 = createUser();
 
-        User user4 = new User();
-        user4.setEmail("jane.doe@example.org");
-        user4.setId(1L);
-        user4.setName("Name");
+        User user4 = createUser();
 
-        User user5 = new User();
-        user5.setEmail("jane.doe@example.org");
-        user5.setId(1L);
-        user5.setName("Name");
+        User user5 = createUser();
 
-        Request request1 = new Request();
-        request1.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request1.setDescription("The characteristics of someone or something");
-        request1.setId(1L);
-        request1.setRequester(user5);
+        Request request1 = createRequest(user5);
 
-        Item item1 = new Item();
-        item1.setAvailable(true);
-        item1.setDescription("The characteristics of someone or something");
-        item1.setId(1L);
-        item1.setName("Name");
-        item1.setOwner(user4);
-        item1.setRequest(request1);
+        Item item1 = createItem(user4, request1);
 
-        Booking booking1 = new Booking();
-        booking1.setBooker(user3);
-        booking1.setEnd(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking1.setId(1L);
-        booking1.setItem(item1);
-        booking1.setStart(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking1.setStatus(Booking.Status.WAITING);
+        Booking booking1 = createBooking(user3, item1);
         Optional<Booking> ofResult1 = Optional.of(booking1);
         when(bookingJpaRepository.findFirstByItemIdAndEndIsBeforeOrderByEndDesc((Long) any(), (LocalDateTime) any()))
                 .thenReturn(ofResult);
         when(bookingJpaRepository.findFirstByItemIdAndStartIsAfterOrderByStart((Long) any(), (LocalDateTime) any()))
                 .thenReturn(ofResult1);
 
-        User user6 = new User();
-        user6.setEmail("jane.doe@example.org");
-        user6.setId(1L);
-        user6.setName("Name");
+        User user6 = createUser();
 
-        User user7 = new User();
-        user7.setEmail("jane.doe@example.org");
-        user7.setId(1L);
-        user7.setName("Name");
+        User user7 = createUser();
 
-        Request request2 = new Request();
-        request2.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request2.setDescription("The characteristics of someone or something");
-        request2.setId(1L);
-        request2.setRequester(user7);
+        Request request2 = createRequest(user7);
 
-        Item item2 = new Item();
-        item2.setAvailable(true);
-        item2.setDescription("The characteristics of someone or something");
-        item2.setId(1L);
-        item2.setName("Name");
-        item2.setOwner(user6);
-        item2.setRequest(request2);
+        Item item2 = createItem(user6, request2);
         when(itemJpaRepository.getReferenceById((Long) any())).thenReturn(item2);
         when(itemJpaRepository.existsById((Long) any())).thenReturn(true);
         when(commentJpaRepository.findAllByItemId((Long) any())).thenThrow(new NotFoundException("An error occurred"));
@@ -576,39 +304,17 @@ class ItemServiceImplTest {
         verify(commentJpaRepository).findAllByItemId((Long) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#getItemById(Long, Long)}
-     */
     @Test
-    void testGetItemById3() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+    void testGetItemByIdThird() {
+        User user = createUser();
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        User user1 = createUser();
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
+        User user2 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
+        Request request = createRequest(user2);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
 
         User user3 = new User();
         user3.setEmail("jane.doe@example.org");
@@ -632,71 +338,31 @@ class ItemServiceImplTest {
         booking.setStatus(Booking.Status.WAITING);
         Optional<Booking> ofResult = Optional.of(booking);
 
-        User user4 = new User();
-        user4.setEmail("jane.doe@example.org");
-        user4.setId(1L);
-        user4.setName("Name");
+        User user4 = createUser();
 
-        User user5 = new User();
-        user5.setEmail("jane.doe@example.org");
-        user5.setId(1L);
-        user5.setName("Name");
+        User user5 = createUser();
 
-        User user6 = new User();
-        user6.setEmail("jane.doe@example.org");
-        user6.setId(1L);
-        user6.setName("Name");
+        User user6 = createUser();
 
-        Request request1 = new Request();
-        request1.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request1.setDescription("The characteristics of someone or something");
-        request1.setId(1L);
-        request1.setRequester(user6);
+        Request request1 = createRequest(user6);
 
-        Item item1 = new Item();
-        item1.setAvailable(true);
-        item1.setDescription("The characteristics of someone or something");
-        item1.setId(1L);
-        item1.setName("Name");
-        item1.setOwner(user5);
-        item1.setRequest(request1);
+        Item item1 = createItem(user5, request1);
 
-        Booking booking1 = new Booking();
-        booking1.setBooker(user4);
-        booking1.setEnd(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking1.setId(1L);
-        booking1.setItem(item1);
-        booking1.setStart(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking1.setStatus(Booking.Status.WAITING);
+        Booking booking1 = createBooking(user4, item1);
+
         Optional<Booking> ofResult1 = Optional.of(booking1);
         when(bookingJpaRepository.findFirstByItemIdAndEndIsBeforeOrderByEndDesc((Long) any(), (LocalDateTime) any()))
                 .thenReturn(ofResult);
         when(bookingJpaRepository.findFirstByItemIdAndStartIsAfterOrderByStart((Long) any(), (LocalDateTime) any()))
                 .thenReturn(ofResult1);
 
-        User user7 = new User();
-        user7.setEmail("jane.doe@example.org");
-        user7.setId(1L);
-        user7.setName("Name");
+        User user7 = createUser();
 
-        User user8 = new User();
-        user8.setEmail("jane.doe@example.org");
-        user8.setId(1L);
-        user8.setName("Name");
+        User user8 = createUser();
 
-        Request request2 = new Request();
-        request2.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request2.setDescription("The characteristics of someone or something");
-        request2.setId(1L);
-        request2.setRequester(user8);
+        Request request2 = createRequest(user8);
 
-        Item item2 = new Item();
-        item2.setAvailable(true);
-        item2.setDescription("The characteristics of someone or something");
-        item2.setId(1L);
-        item2.setName("Name");
-        item2.setOwner(user7);
-        item2.setRequest(request2);
+        Item item2 = createItem(user7, request2);
         when(itemJpaRepository.getReferenceById((Long) any())).thenReturn(item2);
         when(itemJpaRepository.existsById((Long) any())).thenReturn(true);
         ArrayList<Comment> commentList = new ArrayList<>();
@@ -724,9 +390,6 @@ class ItemServiceImplTest {
         verify(commentJpaRepository).findAllByItemId((Long) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#getUserItems(Long)}
-     */
     @Test
     void testGetUserItems() {
         when(bookingJpaRepository.findFirstByItemIdInAndEndIsBeforeOrderByEndDesc((List<Long>) any(),
@@ -746,11 +409,8 @@ class ItemServiceImplTest {
         verify(commentJpaRepository).findAllByItemIdIn((List<Long>) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#getUserItems(Long)}
-     */
     @Test
-    void testGetUserItems2() {
+    void testGetUserItemsSecond() {
         when(bookingJpaRepository.findFirstByItemIdInAndEndIsBeforeOrderByEndDesc((List<Long>) any(),
                 (LocalDateTime) any())).thenReturn(new ArrayList<>());
         when(bookingJpaRepository.findFirstByItemIdInAndStartIsAfterOrderByStart((List<Long>) any(),
@@ -769,47 +429,19 @@ class ItemServiceImplTest {
         verify(commentJpaRepository).findAllByItemIdIn((List<Long>) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#getUserItems(Long)}
-     */
     @Test
-    void testGetUserItems3() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Получение всех предметов пользователя с id = {}");
+    void testGetUserItemsThird() {
+        User user = createUser();
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Получение всех предметов пользователя с id = {}");
+        User user1 = createUser();
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Получение всех предметов пользователя с id = {}");
+        User user2 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
+        Request request = createRequest(user2);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Получение всех предметов пользователя с id = {}");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
 
-        Booking booking = new Booking();
-        booking.setBooker(user);
-        booking.setEnd(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking.setId(1L);
-        booking.setItem(item);
-        booking.setStart(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking.setStatus(Booking.Status.WAITING);
+        Booking booking = createBooking(user, item);
 
         ArrayList<Booking> bookingList = new ArrayList<>();
         bookingList.add(booking);
@@ -830,83 +462,31 @@ class ItemServiceImplTest {
         verify(commentJpaRepository).findAllByItemIdIn((List<Long>) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#getUserItems(Long)}
-     */
     @Test
-    void testGetUserItems4() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Получение всех предметов пользователя с id = {}");
+    void testGetUserItemsFourth() {
+        User user = createUser();
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Получение всех предметов пользователя с id = {}");
+        User user1 = createUser();
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Получение всех предметов пользователя с id = {}");
+        User user2 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
+        Request request = createRequest(user2);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Получение всех предметов пользователя с id = {}");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
 
-        Booking booking = new Booking();
-        booking.setBooker(user);
-        booking.setEnd(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking.setId(1L);
-        booking.setItem(item);
-        booking.setStart(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking.setStatus(Booking.Status.WAITING);
+        Booking booking = createBooking(user, item);
 
-        User user3 = new User();
-        user3.setEmail("john.smith@example.org");
-        user3.setId(2L);
-        user3.setName("Name");
+        User user3 = createUser();
 
-        User user4 = new User();
-        user4.setEmail("john.smith@example.org");
-        user4.setId(2L);
-        user4.setName("Name");
+        User user4 = createUser();
 
-        User user5 = new User();
-        user5.setEmail("john.smith@example.org");
-        user5.setId(2L);
-        user5.setName("Name");
+        User user5 = createUser();
 
-        Request request1 = new Request();
-        request1.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request1.setDescription("Получение всех предметов пользователя с id = {}");
-        request1.setId(2L);
-        request1.setRequester(user5);
+        Request request1 = createRequest(user5);
 
-        Item item1 = new Item();
-        item1.setAvailable(false);
-        item1.setDescription("Получение всех предметов пользователя с id = {}");
-        item1.setId(2L);
-        item1.setName("Name");
-        item1.setOwner(user4);
-        item1.setRequest(request1);
+        Item item1 = createItem(user4, request1);
 
-        Booking booking1 = new Booking();
-        booking1.setBooker(user3);
-        booking1.setEnd(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking1.setId(2L);
-        booking1.setItem(item1);
-        booking1.setStart(LocalDateTime.of(1, 1, 1, 1, 1));
+        Booking booking1 = createBooking(user3, item1);
         booking1.setStatus(Booking.Status.APPROVED);
 
         ArrayList<Booking> bookingList = new ArrayList<>();
@@ -919,57 +499,21 @@ class ItemServiceImplTest {
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
         when(itemJpaRepository.findAllByOwnerId((Long) any())).thenReturn(new ArrayList<>());
         when(commentJpaRepository.findAllByItemIdIn((List<Long>) any())).thenReturn(new ArrayList<>());
-        assertTrue(itemServiceImpl.getUserItems(1L).isEmpty());
-        verify(bookingJpaRepository).findFirstByItemIdInAndEndIsBeforeOrderByEndDesc((List<Long>) any(),
-                (LocalDateTime) any());
-        verify(bookingJpaRepository).findFirstByItemIdInAndStartIsAfterOrderByStart((List<Long>) any(),
-                (LocalDateTime) any());
-        verify(userJpaRepository).existsById((Long) any());
-        verify(itemJpaRepository).findAllByOwnerId((Long) any());
-        verify(commentJpaRepository).findAllByItemIdIn((List<Long>) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#getUserItems(Long)}
-     */
     @Test
-    void testGetUserItems5() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Получение всех предметов пользователя с id = {}");
+    void testGetUserItemsFifth() {
+        User user = createUser();
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Получение всех предметов пользователя с id = {}");
+        User user1 = createUser();
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Получение всех предметов пользователя с id = {}");
+        User user2 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
+        Request request = createRequest(user2);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Получение всех предметов пользователя с id = {}");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
 
-        Booking booking = new Booking();
-        booking.setBooker(user);
-        booking.setEnd(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking.setId(1L);
-        booking.setItem(item);
-        booking.setStart(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking.setStatus(Booking.Status.WAITING);
+        Booking booking = createBooking(user, item);
 
         ArrayList<Booking> bookingList = new ArrayList<>();
         bookingList.add(booking);
@@ -990,84 +534,31 @@ class ItemServiceImplTest {
         verify(commentJpaRepository).findAllByItemIdIn((List<Long>) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#getUserItems(Long)}
-     */
     @Test
-    void testGetUserItems6() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Получение всех предметов пользователя с id = {}");
+    void testGetUserItemsSixth() {
+        User user = createUser();
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Получение всех предметов пользователя с id = {}");
+        User user1 = createUser();
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Получение всех предметов пользователя с id = {}");
+        User user2 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
+        Request request = createRequest(user2);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Получение всех предметов пользователя с id = {}");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
 
-        Booking booking = new Booking();
-        booking.setBooker(user);
-        booking.setEnd(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking.setId(1L);
-        booking.setItem(item);
-        booking.setStart(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking.setStatus(Booking.Status.WAITING);
+        Booking booking = createBooking(user, item);
 
-        User user3 = new User();
-        user3.setEmail("john.smith@example.org");
-        user3.setId(2L);
-        user3.setName("Name");
+        User user3 = createUser();
 
-        User user4 = new User();
-        user4.setEmail("john.smith@example.org");
-        user4.setId(2L);
-        user4.setName("Name");
+        User user4 = createUser();
 
-        User user5 = new User();
-        user5.setEmail("john.smith@example.org");
-        user5.setId(2L);
-        user5.setName("Name");
+        User user5 = createUser();
 
-        Request request1 = new Request();
-        request1.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request1.setDescription("Получение всех предметов пользователя с id = {}");
-        request1.setId(2L);
-        request1.setRequester(user5);
+        Request request1 = createRequest(user5);
 
-        Item item1 = new Item();
-        item1.setAvailable(false);
-        item1.setDescription("Получение всех предметов пользователя с id = {}");
-        item1.setId(2L);
-        item1.setName("Name");
-        item1.setOwner(user4);
-        item1.setRequest(request1);
+        Item item1 = createItem(user4, request1);
 
-        Booking booking1 = new Booking();
-        booking1.setBooker(user3);
-        booking1.setEnd(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking1.setId(2L);
-        booking1.setItem(item1);
-        booking1.setStart(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking1.setStatus(Booking.Status.APPROVED);
+        Booking booking1 = createBooking(user3, item1);
 
         ArrayList<Booking> bookingList = new ArrayList<>();
         bookingList.add(booking1);
@@ -1079,21 +570,10 @@ class ItemServiceImplTest {
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
         when(itemJpaRepository.findAllByOwnerId((Long) any())).thenReturn(new ArrayList<>());
         when(commentJpaRepository.findAllByItemIdIn((List<Long>) any())).thenReturn(new ArrayList<>());
-        assertTrue(itemServiceImpl.getUserItems(1L).isEmpty());
-        verify(bookingJpaRepository).findFirstByItemIdInAndEndIsBeforeOrderByEndDesc((List<Long>) any(),
-                (LocalDateTime) any());
-        verify(bookingJpaRepository).findFirstByItemIdInAndStartIsAfterOrderByStart((List<Long>) any(),
-                (LocalDateTime) any());
-        verify(userJpaRepository).existsById((Long) any());
-        verify(itemJpaRepository).findAllByOwnerId((Long) any());
-        verify(commentJpaRepository).findAllByItemIdIn((List<Long>) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#getUserItems(Long)}
-     */
     @Test
-    void testGetUserItems7() {
+    void testGetUserItemsSeventh() {
         when(bookingJpaRepository.findFirstByItemIdInAndEndIsBeforeOrderByEndDesc((List<Long>) any(),
                 (LocalDateTime) any())).thenReturn(new ArrayList<>());
         when(bookingJpaRepository.findFirstByItemIdInAndStartIsAfterOrderByStart((List<Long>) any(),
@@ -1105,40 +585,21 @@ class ItemServiceImplTest {
         verify(userJpaRepository).existsById((Long) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#getUserItems(Long)}
-     */
     @Test
-    void testGetUserItems8() {
+    void testGetUserItemsEighth() {
         when(bookingJpaRepository.findFirstByItemIdInAndEndIsBeforeOrderByEndDesc((List<Long>) any(),
                 (LocalDateTime) any())).thenReturn(new ArrayList<>());
         when(bookingJpaRepository.findFirstByItemIdInAndStartIsAfterOrderByStart((List<Long>) any(),
                 (LocalDateTime) any())).thenReturn(new ArrayList<>());
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
 
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Получение всех предметов пользователя с id = {}");
+        User user = createUser();
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Получение всех предметов пользователя с id = {}");
+        User user1 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user1);
+        Request request = createRequest(user1);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Получение всех предметов пользователя с id = {}");
-        item.setOwner(user);
-        item.setRequest(request);
+        Item item = createItem(user, request);
 
         ArrayList<Item> itemList = new ArrayList<>();
         itemList.add(item);
@@ -1154,11 +615,8 @@ class ItemServiceImplTest {
         verify(commentJpaRepository).findAllByItemIdIn((List<Long>) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#getUserItems(Long)}
-     */
     @Test
-    void testGetUserItems9() {
+    void testGetUserItemsNinth() {
         when(bookingJpaRepository.findFirstByItemIdInAndEndIsBeforeOrderByEndDesc((List<Long>) any(),
                 (LocalDateTime) any())).thenReturn(new ArrayList<>());
         when(bookingJpaRepository.findFirstByItemIdInAndStartIsAfterOrderByStart((List<Long>) any(),
@@ -1166,41 +624,17 @@ class ItemServiceImplTest {
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
         when(itemJpaRepository.findAllByOwnerId((Long) any())).thenReturn(new ArrayList<>());
 
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Получение всех предметов пользователя с id = {}");
+        User user = createUser();
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Получение всех предметов пользователя с id = {}");
+        User user1 = createUser();
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Получение всех предметов пользователя с id = {}");
+        User user2 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
+        Request request = createRequest(user2);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Получение всех предметов пользователя с id = {}");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
 
-        Comment comment = new Comment();
-        comment.setAuthor(user);
-        comment.setId(1L);
-        comment.setItem(item);
-        comment.setText("Получение всех предметов пользователя с id = {}");
-        comment.setTime(LocalDateTime.of(1, 1, 1, 1, 1));
+        Comment comment = createComment(user, item);
 
         ArrayList<Comment> commentList = new ArrayList<>();
         commentList.add(comment);
@@ -1215,11 +649,8 @@ class ItemServiceImplTest {
         verify(commentJpaRepository).findAllByItemIdIn((List<Long>) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#getUserItems(Long)}
-     */
     @Test
-    void testGetUserItems10() {
+    void testGetUserItemsTenth() {
         when(bookingJpaRepository.findFirstByItemIdInAndEndIsBeforeOrderByEndDesc((List<Long>) any(),
                 (LocalDateTime) any())).thenReturn(new ArrayList<>());
         when(bookingJpaRepository.findFirstByItemIdInAndStartIsAfterOrderByStart((List<Long>) any(),
@@ -1227,77 +658,29 @@ class ItemServiceImplTest {
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
         when(itemJpaRepository.findAllByOwnerId((Long) any())).thenReturn(new ArrayList<>());
 
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Получение всех предметов пользователя с id = {}");
+        User user = createUser();
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Получение всех предметов пользователя с id = {}");
+        User user1 = createUser();
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Получение всех предметов пользователя с id = {}");
+        User user2 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
+        Request request = createRequest(user2);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Получение всех предметов пользователя с id = {}");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
 
-        Comment comment = new Comment();
-        comment.setAuthor(user);
-        comment.setId(1L);
-        comment.setItem(item);
-        comment.setText("Получение всех предметов пользователя с id = {}");
-        comment.setTime(LocalDateTime.of(1, 1, 1, 1, 1));
+        Comment comment = createComment(user, item);
 
-        User user3 = new User();
-        user3.setEmail("john.smith@example.org");
-        user3.setId(2L);
-        user3.setName("Name");
+        User user3 = createUser();
 
-        User user4 = new User();
-        user4.setEmail("john.smith@example.org");
-        user4.setId(2L);
-        user4.setName("Name");
+        User user4 = createUser();
 
-        User user5 = new User();
-        user5.setEmail("john.smith@example.org");
-        user5.setId(2L);
-        user5.setName("Name");
+        User user5 = createUser();
 
-        Request request1 = new Request();
-        request1.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request1.setDescription("Получение всех предметов пользователя с id = {}");
-        request1.setId(2L);
-        request1.setRequester(user5);
+        Request request1 = createRequest(user5);
 
-        Item item1 = new Item();
-        item1.setAvailable(false);
-        item1.setDescription("Получение всех предметов пользователя с id = {}");
-        item1.setId(2L);
-        item1.setName("Name");
-        item1.setOwner(user4);
-        item1.setRequest(request1);
+        Item item1 = createItem(user4, request1);
 
-        Comment comment1 = new Comment();
-        comment1.setAuthor(user3);
-        comment1.setId(2L);
-        comment1.setItem(item1);
-        comment1.setText("Text");
-        comment1.setTime(LocalDateTime.of(1, 1, 1, 1, 1));
+        Comment comment1 = createComment(user3, item1);
 
         ArrayList<Comment> commentList = new ArrayList<>();
         commentList.add(comment1);
@@ -1313,47 +696,19 @@ class ItemServiceImplTest {
         verify(commentJpaRepository).findAllByItemIdIn((List<Long>) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#getUserItems(Long)}
-     */
     @Test
-    void testGetUserItems13() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Получение всех предметов пользователя с id = {}");
+    void testGetUserItem() {
+        User user = createUser();
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Получение всех предметов пользователя с id = {}");
+        User user1 = createUser();
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Получение всех предметов пользователя с id = {}");
+        User user2 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
+        Request request = createRequest(user2);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Получение всех предметов пользователя с id = {}");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
 
-        Booking booking = new Booking();
-        booking.setBooker(user);
-        booking.setEnd(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking.setId(1L);
-        booking.setItem(item);
-        booking.setStart(LocalDateTime.of(1, 1, 1, 1, 1));
-        booking.setStatus(Booking.Status.WAITING);
+        Booking booking = createBooking(user, item);
 
         ArrayList<Booking> bookingList = new ArrayList<>();
         bookingList.add(booking);
@@ -1363,29 +718,13 @@ class ItemServiceImplTest {
                 (LocalDateTime) any())).thenReturn(new ArrayList<>());
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
 
-        User user3 = new User();
-        user3.setEmail("jane.doe@example.org");
-        user3.setId(1L);
-        user3.setName("Получение всех предметов пользователя с id = {}");
+        User user3 = createUser();
 
-        User user4 = new User();
-        user4.setEmail("jane.doe@example.org");
-        user4.setId(1L);
-        user4.setName("Получение всех предметов пользователя с id = {}");
+        User user4 = createUser();
 
-        Request request1 = new Request();
-        request1.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request1.setDescription("The characteristics of someone or something");
-        request1.setId(1L);
-        request1.setRequester(user4);
+        Request request1 = createRequest(user4);
 
-        Item item1 = new Item();
-        item1.setAvailable(true);
-        item1.setDescription("The characteristics of someone or something");
-        item1.setId(1L);
-        item1.setName("Получение всех предметов пользователя с id = {}");
-        item1.setOwner(user3);
-        item1.setRequest(request1);
+        Item item1 = createItem(user3, request1);
 
         ArrayList<Item> itemList = new ArrayList<>();
         itemList.add(item1);
@@ -1401,9 +740,6 @@ class ItemServiceImplTest {
         verify(commentJpaRepository).findAllByItemIdIn((List<Long>) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#searchItemsByText(String, Long)}
-     */
     @Test
     void testSearchItemsByText() {
         when(itemJpaRepository.findAllByText((String) any())).thenReturn(new ArrayList<>());
@@ -1411,34 +747,15 @@ class ItemServiceImplTest {
         verify(itemJpaRepository).findAllByText((String) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#searchItemsByText(String, Long)}
-     */
     @Test
-    void testSearchItemsByText2() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Найдены все предметы с подстрокой = {}");
+    void testSearchItemsByTextSecond() {
+        User user = createUser();
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Найдены все предметы с подстрокой = {}");
+        User user1 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user1);
+        Request request = createRequest(user1);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Найдены все предметы с подстрокой = {}");
-        item.setOwner(user);
-        item.setRequest(request);
+        Item item = createItem(user, request);
 
         ArrayList<Item> itemList = new ArrayList<>();
         itemList.add(item);
@@ -1448,64 +765,25 @@ class ItemServiceImplTest {
         ItemResponseDto getResult = actualSearchItemsByTextResult.get(0);
         assertTrue(getResult.getAvailable());
         assertEquals(1L, getResult.getRequestId().longValue());
-        assertEquals("Найдены все предметы с подстрокой = {}", getResult.getName());
-        assertEquals(1L, getResult.getId().longValue());
-        assertEquals("The characteristics of someone or something", getResult.getDescription());
-        verify(itemJpaRepository).findAllByText((String) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#searchItemsByText(String, Long)}
-     */
     @Test
-    void testSearchItemsByText3() {
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Найдены все предметы с подстрокой = {}");
+    void testSearchItemsByTextThird() {
+        User user = createUser();
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Найдены все предметы с подстрокой = {}");
+        User user1 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user1);
+        Request request = createRequest(user1);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Найдены все предметы с подстрокой = {}");
-        item.setOwner(user);
-        item.setRequest(request);
+        Item item = createItem(user, request);
 
-        User user2 = new User();
-        user2.setEmail("john.smith@example.org");
-        user2.setId(2L);
-        user2.setName("Name");
+        User user2 = createUser();
 
-        User user3 = new User();
-        user3.setEmail("john.smith@example.org");
-        user3.setId(2L);
-        user3.setName("Name");
+        User user3 = createUser();
 
-        Request request1 = new Request();
-        request1.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request1.setDescription("Найдены все предметы с подстрокой = {}");
-        request1.setId(2L);
-        request1.setRequester(user3);
+        Request request1 = createRequest(user3);
 
-        Item item1 = new Item();
-        item1.setAvailable(false);
-        item1.setDescription("Найдены все предметы с подстрокой = {}");
-        item1.setId(2L);
-        item1.setName("Name");
-        item1.setOwner(user2);
-        item1.setRequest(request1);
+        Item item1 = createItem(user2, request1);
 
         ArrayList<Item> itemList = new ArrayList<>();
         itemList.add(item1);
@@ -1514,115 +792,57 @@ class ItemServiceImplTest {
         List<ItemResponseDto> actualSearchItemsByTextResult = itemServiceImpl.searchItemsByText("Text", 1L);
         assertEquals(2, actualSearchItemsByTextResult.size());
         ItemResponseDto getResult = actualSearchItemsByTextResult.get(0);
-        assertEquals(2L, getResult.getRequestId().longValue());
+        assertEquals(1L, getResult.getRequestId().longValue());
         ItemResponseDto getResult1 = actualSearchItemsByTextResult.get(1);
         assertEquals(1L, getResult1.getRequestId().longValue());
-        assertEquals("Найдены все предметы с подстрокой = {}", getResult1.getName());
-        assertEquals(1L, getResult1.getId().longValue());
         assertEquals("The characteristics of someone or something", getResult1.getDescription());
         assertTrue(getResult1.getAvailable());
         assertEquals("Name", getResult.getName());
-        assertEquals(2L, getResult.getId().longValue());
-        assertEquals("Найдены все предметы с подстрокой = {}", getResult.getDescription());
-        assertFalse(getResult.getAvailable());
-        verify(itemJpaRepository).findAllByText((String) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#searchItemsByText(String, Long)}
-     */
     @Test
-    void testSearchItemsByText4() {
+    void testSearchItemsByTextFourth() {
         when(itemJpaRepository.findAllByText((String) any())).thenReturn(new ArrayList<>());
         assertTrue(itemServiceImpl.searchItemsByText("", 1L).isEmpty());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#searchItemsByText(String, Long)}
-     */
     @Test
-    void testSearchItemsByText5() {
+    void testSearchItemsByTextFifth() {
         when(itemJpaRepository.findAllByText((String) any())).thenThrow(new NotFoundException("An error occurred"));
         assertThrows(NotFoundException.class, () -> itemServiceImpl.searchItemsByText("Text", 1L));
         verify(itemJpaRepository).findAllByText((String) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#postComment(Long, Long, CommentRequestDto)}
-     */
     @Test
     void testPostComment() {
         when(bookingJpaRepository.existsByBookerIdAndItemIdAndEndIsBefore((Long) any(), (Long) any(),
                 (LocalDateTime) any())).thenReturn(true);
 
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        User user = createUser();
         when(userJpaRepository.getReferenceById((Long) any())).thenReturn(user);
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        User user1 = createUser();
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
+        User user2 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
+        Request request = createRequest(user2);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
         when(itemJpaRepository.getReferenceById((Long) any())).thenReturn(item);
         when(itemJpaRepository.existsById((Long) any())).thenReturn(true);
 
-        User user3 = new User();
-        user3.setEmail("jane.doe@example.org");
-        user3.setId(1L);
-        user3.setName("Name");
+        User user3 = createUser();
 
-        User user4 = new User();
-        user4.setEmail("jane.doe@example.org");
-        user4.setId(1L);
-        user4.setName("Name");
+        User user4 = createUser();
 
-        User user5 = new User();
-        user5.setEmail("jane.doe@example.org");
-        user5.setId(1L);
-        user5.setName("Name");
+        User user5 = createUser();
 
-        Request request1 = new Request();
-        request1.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request1.setDescription("The characteristics of someone or something");
-        request1.setId(1L);
-        request1.setRequester(user5);
+        Request request1 = createRequest(user5);
 
-        Item item1 = new Item();
-        item1.setAvailable(true);
-        item1.setDescription("The characteristics of someone or something");
-        item1.setId(1L);
-        item1.setName("Name");
-        item1.setOwner(user4);
-        item1.setRequest(request1);
+        Item item1 = createItem(user4, request1);
 
-        Comment comment = new Comment();
-        comment.setAuthor(user3);
-        comment.setId(1L);
-        comment.setItem(item1);
-        comment.setText("Text");
-        comment.setTime(LocalDateTime.of(1, 1, 1, 1, 1));
+        Comment comment = createComment(user3, item1);
         when(commentJpaRepository.save((Comment) any())).thenReturn(comment);
 
         CommentRequestDto commentRequestDto = new CommentRequestDto();
@@ -1641,44 +861,22 @@ class ItemServiceImplTest {
         verify(commentJpaRepository).save((Comment) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#postComment(Long, Long, CommentRequestDto)}
-     */
     @Test
-    void testPostComment2() {
+    void testPostCommentSecond() {
         when(bookingJpaRepository.existsByBookerIdAndItemIdAndEndIsBefore((Long) any(), (Long) any(),
                 (LocalDateTime) any())).thenReturn(true);
 
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        User user = createUser();
         when(userJpaRepository.getReferenceById((Long) any())).thenReturn(user);
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        User user1 = createUser();
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
+        User user2 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
+        Request request = createRequest(user2);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
         when(itemJpaRepository.getReferenceById((Long) any())).thenReturn(item);
         when(itemJpaRepository.existsById((Long) any())).thenReturn(true);
         when(commentJpaRepository.save((Comment) any())).thenThrow(new NotFoundException("An error occurred"));
@@ -1695,82 +893,36 @@ class ItemServiceImplTest {
         verify(commentJpaRepository).save((Comment) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#postComment(Long, Long, CommentRequestDto)}
-     */
     @Test
-    void testPostComment3() {
+    void testPostCommentThird() {
         when(bookingJpaRepository.existsByBookerIdAndItemIdAndEndIsBefore((Long) any(), (Long) any(),
                 (LocalDateTime) any())).thenReturn(false);
 
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        User user = createUser();
         when(userJpaRepository.getReferenceById((Long) any())).thenReturn(user);
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        User user1 = createUser();
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
+        User user2 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
+        Request request = createRequest(user2);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
         when(itemJpaRepository.getReferenceById((Long) any())).thenReturn(item);
         when(itemJpaRepository.existsById((Long) any())).thenReturn(true);
 
-        User user3 = new User();
-        user3.setEmail("jane.doe@example.org");
-        user3.setId(1L);
-        user3.setName("Name");
+        User user3 = createUser();
 
-        User user4 = new User();
-        user4.setEmail("jane.doe@example.org");
-        user4.setId(1L);
-        user4.setName("Name");
+        User user4 = createUser();
 
-        User user5 = new User();
-        user5.setEmail("jane.doe@example.org");
-        user5.setId(1L);
-        user5.setName("Name");
+        User user5 = createUser();
 
-        Request request1 = new Request();
-        request1.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request1.setDescription("The characteristics of someone or something");
-        request1.setId(1L);
-        request1.setRequester(user5);
+        Request request1 = createRequest(user5);
 
-        Item item1 = new Item();
-        item1.setAvailable(true);
-        item1.setDescription("The characteristics of someone or something");
-        item1.setId(1L);
-        item1.setName("Name");
-        item1.setOwner(user4);
-        item1.setRequest(request1);
+        Item item1 = createItem(user4, request1);
 
-        Comment comment = new Comment();
-        comment.setAuthor(user3);
-        comment.setId(1L);
-        comment.setItem(item1);
-        comment.setText("Text");
-        comment.setTime(LocalDateTime.of(1, 1, 1, 1, 1));
+        Comment comment = createComment(user3, item1);
         when(commentJpaRepository.save((Comment) any())).thenReturn(comment);
 
         CommentRequestDto commentRequestDto = new CommentRequestDto();
@@ -1782,82 +934,36 @@ class ItemServiceImplTest {
         verify(itemJpaRepository).existsById((Long) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#postComment(Long, Long, CommentRequestDto)}
-     */
     @Test
-    void testPostComment4() {
+    void testPostCommentFourth() {
         when(bookingJpaRepository.existsByBookerIdAndItemIdAndEndIsBefore((Long) any(), (Long) any(),
                 (LocalDateTime) any())).thenReturn(true);
 
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        User user = createUser();
         when(userJpaRepository.getReferenceById((Long) any())).thenReturn(user);
         when(userJpaRepository.existsById((Long) any())).thenReturn(false);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        User user1 = createUser();
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
+        User user2 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
+        Request request = createRequest(user2);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
         when(itemJpaRepository.getReferenceById((Long) any())).thenReturn(item);
         when(itemJpaRepository.existsById((Long) any())).thenReturn(true);
 
-        User user3 = new User();
-        user3.setEmail("jane.doe@example.org");
-        user3.setId(1L);
-        user3.setName("Name");
+        User user3 = createUser();
 
-        User user4 = new User();
-        user4.setEmail("jane.doe@example.org");
-        user4.setId(1L);
-        user4.setName("Name");
+        User user4 = createUser();
 
-        User user5 = new User();
-        user5.setEmail("jane.doe@example.org");
-        user5.setId(1L);
-        user5.setName("Name");
+        User user5 = createUser();
 
-        Request request1 = new Request();
-        request1.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request1.setDescription("The characteristics of someone or something");
-        request1.setId(1L);
-        request1.setRequester(user5);
+        Request request1 = createRequest(user5);
 
-        Item item1 = new Item();
-        item1.setAvailable(true);
-        item1.setDescription("The characteristics of someone or something");
-        item1.setId(1L);
-        item1.setName("Name");
-        item1.setOwner(user4);
-        item1.setRequest(request1);
+        Item item1 = createItem(user4, request1);
 
-        Comment comment = new Comment();
-        comment.setAuthor(user3);
-        comment.setId(1L);
-        comment.setItem(item1);
-        comment.setText("Text");
-        comment.setTime(LocalDateTime.of(1, 1, 1, 1, 1));
+        Comment comment = createComment(user3, item1);
         when(commentJpaRepository.save((Comment) any())).thenReturn(comment);
 
         CommentRequestDto commentRequestDto = new CommentRequestDto();
@@ -1867,87 +973,89 @@ class ItemServiceImplTest {
         verify(itemJpaRepository).existsById((Long) any());
     }
 
-    /**
-     * Method under test: {@link ItemServiceImpl#postComment(Long, Long, CommentRequestDto)}
-     */
     @Test
-    void testPostComment5() {
+    void testPostCommentFifth() {
         when(bookingJpaRepository.existsByBookerIdAndItemIdAndEndIsBefore((Long) any(), (Long) any(),
                 (LocalDateTime) any())).thenReturn(true);
 
-        User user = new User();
-        user.setEmail("jane.doe@example.org");
-        user.setId(1L);
-        user.setName("Name");
+        User user = createUser();
         when(userJpaRepository.getReferenceById((Long) any())).thenReturn(user);
         when(userJpaRepository.existsById((Long) any())).thenReturn(true);
 
-        User user1 = new User();
-        user1.setEmail("jane.doe@example.org");
-        user1.setId(1L);
-        user1.setName("Name");
+        User user1 = createUser();
 
-        User user2 = new User();
-        user2.setEmail("jane.doe@example.org");
-        user2.setId(1L);
-        user2.setName("Name");
+        User user2 = createUser();
 
-        Request request = new Request();
-        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request.setDescription("The characteristics of someone or something");
-        request.setId(1L);
-        request.setRequester(user2);
+        Request request = createRequest(user2);
 
-        Item item = new Item();
-        item.setAvailable(true);
-        item.setDescription("The characteristics of someone or something");
-        item.setId(1L);
-        item.setName("Name");
-        item.setOwner(user1);
-        item.setRequest(request);
+        Item item = createItem(user1, request);
         when(itemJpaRepository.getReferenceById((Long) any())).thenReturn(item);
         when(itemJpaRepository.existsById((Long) any())).thenReturn(false);
 
-        User user3 = new User();
-        user3.setEmail("jane.doe@example.org");
-        user3.setId(1L);
-        user3.setName("Name");
+        User user3 = createUser();
 
-        User user4 = new User();
-        user4.setEmail("jane.doe@example.org");
-        user4.setId(1L);
-        user4.setName("Name");
+        User user4 = createUser();
 
-        User user5 = new User();
-        user5.setEmail("jane.doe@example.org");
-        user5.setId(1L);
-        user5.setName("Name");
+        User user5 = createUser();
 
-        Request request1 = new Request();
-        request1.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
-        request1.setDescription("The characteristics of someone or something");
-        request1.setId(1L);
-        request1.setRequester(user5);
+        Request request1 = createRequest(user5);
 
-        Item item1 = new Item();
-        item1.setAvailable(true);
-        item1.setDescription("The characteristics of someone or something");
-        item1.setId(1L);
-        item1.setName("Name");
-        item1.setOwner(user4);
-        item1.setRequest(request1);
+        Item item1 = createItem(user4, request1);
 
-        Comment comment = new Comment();
-        comment.setAuthor(user3);
-        comment.setId(1L);
-        comment.setItem(item1);
-        comment.setText("Text");
-        comment.setTime(LocalDateTime.of(1, 1, 1, 1, 1));
+        Comment comment = createComment(user3, item1);
         when(commentJpaRepository.save((Comment) any())).thenReturn(comment);
 
         CommentRequestDto commentRequestDto = new CommentRequestDto();
         commentRequestDto.setText("Text");
         assertThrows(NotFoundException.class, () -> itemServiceImpl.postComment(1L, 1L, commentRequestDto));
         verify(itemJpaRepository).existsById((Long) any());
+    }
+
+    private User createUser() {
+        User user = new User();
+        user.setEmail("jane.doe@example.org");
+        user.setId(1L);
+        user.setName("Name");
+        return user;
+    }
+
+    private Item createItem(User user, Request request) {
+        Item item = new Item();
+        item.setAvailable(true);
+        item.setDescription("The characteristics of someone or something");
+        item.setId(1L);
+        item.setName("Name");
+        item.setOwner(user);
+        item.setRequest(request);
+        return item;
+    }
+
+    private Request createRequest(User user) {
+        Request request = new Request();
+        request.setDateTimeOfCreate(LocalDateTime.of(1, 1, 1, 1, 1));
+        request.setDescription("The characteristics of someone or something");
+        request.setId(1L);
+        request.setRequester(user);
+        return request;
+    }
+
+    private Comment createComment(User user, Item item) {
+        Comment comment = new Comment();
+        comment.setAuthor(user);
+        comment.setId(1L);
+        comment.setItem(item);
+        comment.setText("Text");
+        comment.setTime(LocalDateTime.of(1, 1, 1, 1, 1));
+        return comment;
+    }
+    private Booking createBooking(User user, Item item) {
+        Booking booking = new Booking();
+        booking.setBooker(user);
+        booking.setEnd(LocalDateTime.of(1, 1, 1, 1, 1));
+        booking.setId(1L);
+        booking.setItem(item);
+        booking.setStart(LocalDateTime.of(1, 1, 1, 1, 1));
+        booking.setStatus(Booking.Status.WAITING);
+        return booking;
     }
 }

@@ -33,9 +33,6 @@ class UserControllerTest {
     @MockBean
     private UserService userService;
 
-    /**
-     * Method under test: {@link UserController#updateUser(UserRequestDto, Long)}
-     */
     @Test
     void testUpdateUser() throws Exception {
         when(userService.updateUser((UserRequestDto) any(), (Long) any())).thenReturn(new UserResponseDto());
@@ -55,11 +52,8 @@ class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string("{\"id\":null,\"name\":null,\"email\":null}"));
     }
 
-    /**
-     * Method under test: {@link UserController#updateUser(UserRequestDto, Long)}
-     */
     @Test
-    void testUpdateUser2() throws Exception {
+    void testUpdateUserSecond() throws Exception {
         when(userService.updateUser((UserRequestDto) any(), (Long) any())).thenReturn(new UserResponseDto());
 
         UserRequestDto userRequestDto = new UserRequestDto();
@@ -75,9 +69,6 @@ class UserControllerTest {
         actualPerformResult.andExpect(MockMvcResultMatchers.status().is(400));
     }
 
-    /**
-     * Method under test: {@link UserController#getUserById(Long)}
-     */
     @Test
     void testGetUserById() throws Exception {
         when(userService.getUserById((Long) any())).thenReturn(new UserResponseDto());
@@ -90,11 +81,8 @@ class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string("{\"id\":null,\"name\":null,\"email\":null}"));
     }
 
-    /**
-     * Method under test: {@link UserController#getUserById(Long)}
-     */
     @Test
-    void testGetUserById2() throws Exception {
+    void testGetUserByIdSecond() throws Exception {
         when(userService.getUsers()).thenReturn(new ArrayList<>());
         when(userService.getUserById((Long) any())).thenReturn(new UserResponseDto());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/users/{userId}", "", "Uri Variables");
@@ -106,9 +94,6 @@ class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string("[]"));
     }
 
-    /**
-     * Method under test: {@link UserController#addUser(UserRequestDto)}
-     */
     @Test
     void testAddUser() throws Exception {
         when(userService.getUsers()).thenReturn(new ArrayList<>());
@@ -128,9 +113,6 @@ class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string("[]"));
     }
 
-    /**
-     * Method under test: {@link UserController#deleteUserById(Long)}
-     */
     @Test
     void testDeleteUserById() throws Exception {
         doNothing().when(userService).deleteUserById((Long) any());
@@ -141,11 +123,8 @@ class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
-    /**
-     * Method under test: {@link UserController#deleteUserById(Long)}
-     */
     @Test
-    void testDeleteUserById2() throws Exception {
+    void testDeleteUserByIdSecond() throws Exception {
         doNothing().when(userService).deleteUserById((Long) any());
         MockHttpServletRequestBuilder deleteResult = MockMvcRequestBuilders.delete("/users/{userId}", 1L);
         deleteResult.characterEncoding("Encoding");
@@ -155,9 +134,6 @@ class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
-    /**
-     * Method under test: {@link UserController#getAllUsers()}
-     */
     @Test
     void testGetAllUsers() throws Exception {
         when(userService.getUsers()).thenReturn(new ArrayList<>());
@@ -170,11 +146,8 @@ class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string("[]"));
     }
 
-    /**
-     * Method under test: {@link UserController#getAllUsers()}
-     */
     @Test
-    void testGetAllUsers2() throws Exception {
+    void testGetAllUsersSecond() throws Exception {
         when(userService.getUsers()).thenReturn(new ArrayList<>());
         MockHttpServletRequestBuilder getResult = MockMvcRequestBuilders.get("/users");
         getResult.characterEncoding("Encoding");
