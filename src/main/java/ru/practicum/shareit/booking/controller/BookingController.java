@@ -1,13 +1,17 @@
 package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.request.BookItemRequestDto;
 import ru.practicum.shareit.booking.dto.response.BookingResponseDto;
 import ru.practicum.shareit.booking.service.BookingService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 
+@Validated
 @RestController
 @RequestMapping("/bookings")
 @RequiredArgsConstructor
@@ -36,16 +40,19 @@ public class BookingController {
     }
 
     @GetMapping
-    public Iterable<BookingResponseDto> getBookingsByUserId(
-            @RequestHeader(header) Long userId,
-            @RequestParam(required = false, defaultValue = "ALL") String state) {
-        return bookingServiceImpl.getBookingsByUserId(userId, state);
+    public Iterable<BookingResponseDto> getBookingsByUserId(@PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                                            @Positive @RequestParam(defaultValue = "10") Integer size,
+                                                            @RequestHeader(header) Long userId,
+                                                            @RequestParam(required = false, defaultValue = "ALL") String state) {
+        return bookingServiceImpl.getBookingsByUserId(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     public Iterable<BookingResponseDto> getBookingsByOwnerId(
+            @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+            @Positive @RequestParam(defaultValue = "10") Integer size,
             @RequestHeader(header) Long userId,
             @RequestParam(required = false, defaultValue = "ALL") String state) {
-        return bookingServiceImpl.getBookingsByOwnerId(userId, state);
+        return bookingServiceImpl.getBookingsByOwnerId(from, size, userId, state);
     }
 }

@@ -15,6 +15,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentJpaRepository;
 import ru.practicum.shareit.item.repository.ItemJpaRepository;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.request.repository.ItemRequestJpaRepository;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.repository.UserJpaRepository;
 
@@ -37,9 +38,14 @@ public class ItemServiceImpl implements ItemService {
 
     private final CommentJpaRepository commentJpaRepository;
 
+    private final ItemRequestJpaRepository itemRequestJpaRepository;
+
     @Override
     public ItemResponseDto addItem(ItemRequestDto itemRequestDto, Long userId) {
         Item item = ItemMapper.toItem(itemRequestDto);
+        if (itemRequestDto.getRequestId() != null) {
+            item.setRequest(itemRequestJpaRepository.getReferenceById(itemRequestDto.getRequestId()));
+        }
         checkUserExistsById(userId);
         item.setOwner(userJpaRepository.getReferenceById(userId));
 
@@ -69,7 +75,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemJpaRepository.getReferenceById(itemId);
         if (item.getOwner().getId().equals(userId)) {
             Booking lastBooking = bookingJpaRepository
-                    .findFirstByItemIdAndEndIsBeforeOrderByEndDesc(item.getId(), LocalDateTime.now())
+                    .findFirstByItemIdAndEndIsBeforeOrderByEndDesc(item.getId(), LocalDateTime.now().plusHours(1))
                     .orElse(null);
             if (lastBooking != null && lastBooking.getStatus() == REJECTED) {
                 lastBooking = null;

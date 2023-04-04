@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.*;
-import ru.practicum.shareit.validation.annotation.group.ForCreate;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.validation.annotation.group.ForCreate;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -24,7 +24,7 @@ public class ItemController {
     @PostMapping
     public ItemResponseDto createItem(@RequestBody @Validated(ForCreate.class) ItemRequestDto itemRequestDto,
                                       @RequestHeader(header) Long userId) {
-        log.info("Запрос на получение предмета по id = {}", userId);
+        log.info("Запрос на создание предмета по id = {}", userId);
         return itemService.addItem(itemRequestDto, userId);
     }
 
