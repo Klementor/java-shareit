@@ -13,7 +13,7 @@ import java.util.List;
 public class BookingClient {
     private final WebClient client;
 
-    public BookingClient(@Value("${shareit-server.url}") String serverUrl) {
+    public BookingClient(@Value("http://server:9090") String serverUrl) {
         this.client = WebClient.create(serverUrl);
     }
 
