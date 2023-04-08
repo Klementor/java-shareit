@@ -61,13 +61,14 @@ public class ItemClient {
                 .block();
     }
 
-    public List<ItemResponseDto> searchItemsByNameOrDescription(String text, Integer from, Integer size) {
+    public List<ItemResponseDto> searchItemsByNameOrDescription(String text, Integer from, Integer size, Long userId) {
         return client.get()
                 .uri(builder -> builder.path("/items/search")
                         .queryParam("text", text)
                         .build())
                 .header("from", from.toString())
                 .header("size", size.toString())
+                .header("X_SHARER_USER_ID", userId.toString())
                 .retrieve()
                 .bodyToFlux(ItemResponseDto.class)
                 .collectList()

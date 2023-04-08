@@ -26,9 +26,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponseDto addUser(UserRequestDto userRequestDto) {
-        User user = userJpaRepository.save(UserMapper.fromUserRequestDto(userRequestDto));
+        User user = UserMapper.fromUserRequestDto(userRequestDto);
+        User savedUser = userJpaRepository.save(user);
         log.debug("Пользователь с id= {} добавлен", user.getId());
-        return UserMapper.toUserResponseDto(user);
+        return UserMapper.toUserResponseDto(savedUser);
     }
 
     @Override
