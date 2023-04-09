@@ -68,7 +68,7 @@ public class ItemClient {
                         .build())
                 .header("from", from.toString())
                 .header("size", size.toString())
-                .header("X_SHARER_USER_ID", userId.toString())
+                .header("X-Sharer-User-Id", userId.toString())
                 .retrieve()
                 .bodyToFlux(ItemResponseDto.class)
                 .collectList()

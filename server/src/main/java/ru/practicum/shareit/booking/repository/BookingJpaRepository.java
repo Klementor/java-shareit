@@ -1,11 +1,16 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.item.model.Item;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,4 +51,10 @@ public interface BookingJpaRepository extends JpaRepository<Booking, Long> {
     List<Booking> findFirstByItemIdInAndEndIsBeforeOrderByEndDesc(List<Long> itemIds, LocalDateTime now);
 
     List<Booking> findFirstByItemIdInAndStartIsAfterOrderByStart(List<Long> itemIds, LocalDateTime now);
+
+    @Query(" select b " +
+            "from Booking b " +
+            "where b.item in ?1 " +
+            "and b.status = 'APPROVED'")
+    List<Booking> findApprovedForItems(Collection<Item> items, Sort sort);
 }

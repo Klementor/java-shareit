@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingJpaRepository;
@@ -19,6 +20,7 @@ import ru.practicum.shareit.request.repository.ItemRequestJpaRepository;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.repository.UserJpaRepository;
 
+import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
@@ -70,31 +72,45 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemWithBookingsResponseDto getItemById(Long itemId, Long userId) {
-        checkItemExistsById(itemId);
-        log.debug("Получен предмет с id = {} пользователем с id = {}", itemId, userId);
-        Item item = itemJpaRepository.getReferenceById(itemId);
-        if (item.getOwner().getId().equals(userId)) {
-            Booking lastBooking = bookingJpaRepository
-                    .findFirstByItemIdAndEndIsBeforeOrderByEndDesc(item.getId(), LocalDateTime.now().plusHours(1))
-                    .orElse(null);
-            if (lastBooking != null && lastBooking.getStatus() == REJECTED) {
-                lastBooking = null;
-            }
-            Booking nextBooking = bookingJpaRepository
-                    .findFirstByItemIdAndStartIsAfterOrderByStart(item.getId(), LocalDateTime.now())
-                    .orElse(null);
-            if (nextBooking != null && nextBooking.getStatus() == REJECTED) {
-                nextBooking = null;
-            }
-            return ItemMapper.toItemWithBookingsResponseDto(item,
-                    lastBooking,
-                    nextBooking,
-                    commentJpaRepository.findAllByItemId(itemId));
+//        checkItemExistsById(itemId);
+//        log.debug("Получен предмет с id = {} пользователем с id = {}", itemId, userId);
+//        Item item = itemJpaRepository.getReferenceById(itemId);
+//        if (item.getOwner().getId().equals(userId)) {
+//            Booking lastBooking = bookingJpaRepository
+//                    .findFirstByItemIdAndEndIsBeforeOrderByEndDesc(item.getId(), LocalDateTime.now())
+//                    .orElse(null);
+//            if (lastBooking != null && lastBooking.getStatus() == REJECTED) {
+//                lastBooking = null;
+//            }
+//            Booking nextBooking = bookingJpaRepository
+//                    .findFirstByItemIdAndStartIsAfterOrderByStart(item.getId(), LocalDateTime.now())
+//                    .orElse(null);
+//            if (nextBooking != null && nextBooking.getStatus() == REJECTED) {
+//                nextBooking = null;
+//            }
+//            return ItemMapper.toItemWithBookingsResponseDto(item,
+//                    lastBooking,
+//                    nextBooking,
+//                    commentJpaRepository.findAllByItemId(itemId));
+//        }
+//        return ItemMapper.toItemWithBookingsResponseDto(item,
+//                null,
+//                null,
+//                commentJpaRepository.findAllByItemId(itemId));
+        userJpaRepository.findById(userId).orElseThrow(() -> new IllegalStateException("Неверный id пользователя"));
+
+        Item item =itemJpaRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Item с указанным id не найден"));
+
+        List<Comment> comments = commentJpaRepository
+                .findByItem(item, Sort.by(Sort.Direction.DESC, "start"));
+        List<Booking> approvedBookings;
+        if (item.getOwner().getId() == userId) {
+            approvedBookings = bookingJpaRepository
+                    .findApprovedForItems(List.of(item), Sort.by(Sort.Direction.DESC, "start"));
+        } else {
+            approvedBookings = Collections.emptyList();
         }
-        return ItemMapper.toItemWithBookingsResponseDto(item,
-                null,
-                null,
-                commentJpaRepository.findAllByItemId(itemId));
+        return toItemInfo(item, approvedBookings, comments);
     }
 
     @Override
@@ -176,4 +192,21 @@ public class ItemServiceImpl implements ItemService {
             throw new UserNotFoundException("У данной вещи другой хозяин");
         }
     }
+
+    private ItemWithBookingsResponseDto toItemInfo(Item item, List<Booking> bookings, List<Comment> comments) {
+        LocalDateTime now = LocalDateTime.now();
+        Booking lastBooking = bookings.stream()
+                .filter(b -> b.isLastOrCurrent(now))
+                .findFirst()
+                .orElse(null);
+
+        Booking nextBooking = bookings.stream()
+                .filter(b -> b.isFuture(now))
+                .reduce((first, second) -> second)
+                .orElse(null);
+
+        return ItemMapper.toItemWithBookingsResponseDto(item, lastBooking, nextBooking, comments);
+    }
+
+
 }

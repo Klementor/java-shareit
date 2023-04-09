@@ -22,7 +22,7 @@ public class ItemWithBookingsResponseDto {
     private Boolean available;
     private BookingDto lastBooking;
     private BookingDto nextBooking;
-    private List<CommentDto> comments;
+    private List<CommentResponseDto> comments;
 
     @Getter
     @Setter

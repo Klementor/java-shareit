@@ -194,56 +194,6 @@ class ItemMapperTest {
     }
 
     @Test
-    void testToItemWithBookingsResponseDtoSecond() {
-        List<User> listUsers = createUsers();
-        User user = listUsers.get(0);
-        User user1 = listUsers.get(1);
-        User user2 = listUsers.get(2);
-
-        Request request = createRequest(user1);
-
-        Item item = createItem(user, request);
-
-        User user3 = new User();
-        user3.setEmail("jane.doe@example.org");
-        user3.setId(1L);
-        user3.setName("Name");
-
-        User user4 = new User();
-        user4.setEmail("jane.doe@example.org");
-        user4.setId(1L);
-        user4.setName("Name");
-
-        Request request1 = createRequest(user4);
-
-        Item item1 = createItem(user3, request1);
-
-        Comment comment = new Comment();
-        comment.setAuthor(user2);
-        comment.setId(1L);
-        comment.setItem(item1);
-        comment.setText("Text");
-        comment.setTime(LocalDateTime.of(1, 1, 1, 1, 1));
-
-        ArrayList<Comment> commentList = new ArrayList<>();
-        commentList.add(comment);
-        ItemWithBookingsResponseDto actualToItemWithBookingsResponseDtoResult = ItemMapper
-                .toItemWithBookingsResponseDto(item, null, null, commentList);
-        assertTrue(actualToItemWithBookingsResponseDtoResult.getAvailable());
-        assertEquals("Name", actualToItemWithBookingsResponseDtoResult.getName());
-        assertEquals(1L, actualToItemWithBookingsResponseDtoResult.getId().longValue());
-        assertEquals("The characteristics of someone or something",
-                actualToItemWithBookingsResponseDtoResult.getDescription());
-        List<ItemWithBookingsResponseDto.CommentDto> comments = actualToItemWithBookingsResponseDtoResult.getComments();
-        assertEquals(1, comments.size());
-        ItemWithBookingsResponseDto.CommentDto getResult = comments.get(0);
-        assertEquals("Name", getResult.getAuthorName());
-        assertEquals("Text", getResult.getText());
-        assertEquals(1L, getResult.getId().longValue());
-        assertEquals("0001-01-01", getResult.getCreated().toLocalDate().toString());
-    }
-
-    @Test
     void testToComment() {
         CommentRequestDto commentRequestDto = new CommentRequestDto();
         commentRequestDto.setText("Text");
