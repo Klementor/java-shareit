@@ -40,7 +40,7 @@ public class ItemController {
     public ItemWithBookingsResponseDto getItemById(@PathVariable Long itemId,
                                                    @RequestHeader(header) Long userId) {
         log.info("Запрос на получение предмета по id = {}", itemId);
-        return itemService.getItemById(userId, itemId);
+        return itemService.getItemById(itemId, userId);
     }
 
     @GetMapping
