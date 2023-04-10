@@ -43,17 +43,5 @@ public class Booking {
         REJECTED,
         CANCELED
     }
-
-    @Transient
-    public boolean isLastOrCurrent(LocalDateTime now) {
-        return status == Status.APPROVED
-                && ((end.isEqual(now) || end.isBefore(now)))
-                || (start.isEqual(now) ||start.isBefore(now));
-    }
-
-    @Transient
-    public boolean isFuture(LocalDateTime now) {
-        return status == Status.APPROVED && start.isAfter(now);
-    }
 }
 

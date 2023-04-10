@@ -13,7 +13,7 @@ import java.util.List;
 public class ItemRequestClient {
     private final WebClient client;
 
-    public ItemRequestClient(@Value("http://server:9090") String serverUrl) {
+    public ItemRequestClient(@Value("${shareit-server.url}") String serverUrl) {
         this.client = WebClient.create(serverUrl);
     }
 

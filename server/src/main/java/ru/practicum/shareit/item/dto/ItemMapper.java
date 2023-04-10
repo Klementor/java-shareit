@@ -48,34 +48,38 @@ public class ItemMapper {
                                                                             Booking lastBooking,
                                                                             Booking nextBooking,
                                                                             List<Comment> comments) {
-//        ItemWithBookingsResponseDto itemWithBookingsResponseDto = new ItemWithBookingsResponseDto();
-//
-//        if (lastBooking != null) {
-//            itemWithBookingsResponseDto.setLastBooking(ItemWithBookingsResponseDto.BookingDto.fromBooking(lastBooking));
-//        }
-//        if (nextBooking != null) {
-//            itemWithBookingsResponseDto.setNextBooking(ItemWithBookingsResponseDto.BookingDto.fromBooking(nextBooking));
-//        }
-//
-//        itemWithBookingsResponseDto.setId(item.getId());
-//        itemWithBookingsResponseDto.setName(item.getName());
-//        itemWithBookingsResponseDto.setDescription(item.getDescription());
-//        itemWithBookingsResponseDto.setAvailable(item.getAvailable());
-//        itemWithBookingsResponseDto.setComments(ItemWithBookingsResponseDto.CommentDto.toListCommentDto(comments));
-//        return itemWithBookingsResponseDto;
+        ItemWithBookingsResponseDto itemWithBookingsResponseDto = new ItemWithBookingsResponseDto();
+
+        if (lastBooking != null) {
+            itemWithBookingsResponseDto.setLastBooking(ItemWithBookingsResponseDto.BookingDto.fromBooking(lastBooking));
+        }
+        if (nextBooking != null) {
+            itemWithBookingsResponseDto.setNextBooking(ItemWithBookingsResponseDto.BookingDto.fromBooking(nextBooking));
+        }
 
         List<CommentResponseDto> commentDtos = comments.stream()
                 .map(ItemMapper::toCommentResponseDto)
                 .collect(Collectors.toList());
 
-        return new ItemWithBookingsResponseDto(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable(),
-                lastBooking != null ? ItemWithBookingsResponseDto.BookingDto.fromBooking(lastBooking) : null,
-                nextBooking != null ? ItemWithBookingsResponseDto.BookingDto.fromBooking(nextBooking) : null,
-                commentDtos);
+        itemWithBookingsResponseDto.setId(item.getId());
+        itemWithBookingsResponseDto.setName(item.getName());
+        itemWithBookingsResponseDto.setDescription(item.getDescription());
+        itemWithBookingsResponseDto.setAvailable(item.getAvailable());
+        itemWithBookingsResponseDto.setComments(commentDtos);
+        return itemWithBookingsResponseDto;
+
+//        List<CommentResponseDto> commentDtos = comments.stream()
+//                .map(ItemMapper::toCommentResponseDto)
+//                .collect(Collectors.toList());
+//
+//        return new ItemWithBookingsResponseDto(
+//                item.getId(),
+//                item.getName(),
+//                item.getDescription(),
+//                item.getAvailable(),
+//                lastBooking != null ? ItemWithBookingsResponseDto.BookingDto.fromBooking(lastBooking) : null,
+//                nextBooking != null ? ItemWithBookingsResponseDto.BookingDto.fromBooking(nextBooking) : null,
+//                commentDtos);
     }
 
     public static Comment toComment(CommentRequestDto commentRequestDto, User user, Item item, LocalDateTime time) {

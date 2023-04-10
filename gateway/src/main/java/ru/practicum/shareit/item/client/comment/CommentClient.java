@@ -11,7 +11,7 @@ import ru.practicum.shareit.item.dto.response.comment.CommentResponseDto;
 public class CommentClient {
     private final WebClient client;
 
-    public CommentClient(@Value("http://server:9090") String serverUrl) {
+    public CommentClient(@Value("${shareit-server.url}") String serverUrl) {
         this.client = WebClient.create(serverUrl);
     }
 
