@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingJpaRepository;
@@ -20,7 +19,6 @@ import ru.practicum.shareit.request.repository.ItemRequestJpaRepository;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.repository.UserJpaRepository;
 
-import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
