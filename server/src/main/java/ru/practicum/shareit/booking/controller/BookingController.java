@@ -7,10 +7,6 @@ import ru.practicum.shareit.booking.dto.request.BookItemRequestDto;
 import ru.practicum.shareit.booking.dto.response.BookingResponseDto;
 import ru.practicum.shareit.booking.service.BookingService;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
-
 @Validated
 @RestController
 @RequestMapping("/bookings")
@@ -21,7 +17,7 @@ public class BookingController {
     private final String header = "X-Sharer-User-Id";
 
     @PostMapping
-    public BookingResponseDto addBooking(@Valid @RequestBody BookItemRequestDto itemRequestDto,
+    public BookingResponseDto addBooking(@RequestBody BookItemRequestDto itemRequestDto,
                                          @RequestHeader(header) Long userId) {
         return bookingServiceImpl.addBooking(itemRequestDto, userId);
     }
@@ -40,8 +36,8 @@ public class BookingController {
     }
 
     @GetMapping
-    public Iterable<BookingResponseDto> getBookingsByUserId(@PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
-                                                            @Positive @RequestParam(defaultValue = "10") Integer size,
+    public Iterable<BookingResponseDto> getBookingsByUserId(@RequestParam(defaultValue = "0") Integer from,
+                                                            @RequestParam(defaultValue = "10") Integer size,
                                                             @RequestHeader(header) Long userId,
                                                             @RequestParam(required = false, defaultValue = "ALL") String state) {
         return bookingServiceImpl.getBookingsByUserId(userId, state, from, size);
@@ -49,8 +45,8 @@ public class BookingController {
 
     @GetMapping("/owner")
     public Iterable<BookingResponseDto> getBookingsByOwnerId(
-            @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
-            @Positive @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "0") Integer from,
+            @RequestParam(defaultValue = "10") Integer size,
             @RequestHeader(header) Long userId,
             @RequestParam(required = false, defaultValue = "ALL") String state) {
         return bookingServiceImpl.getBookingsByOwnerId(from, size, userId, state);

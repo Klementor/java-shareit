@@ -66,19 +66,6 @@ public class ItemMapper {
         itemWithBookingsResponseDto.setAvailable(item.getAvailable());
         itemWithBookingsResponseDto.setComments(commentDtos);
         return itemWithBookingsResponseDto;
-
-//        List<CommentResponseDto> commentDtos = comments.stream()
-//                .map(ItemMapper::toCommentResponseDto)
-//                .collect(Collectors.toList());
-//
-//        return new ItemWithBookingsResponseDto(
-//                item.getId(),
-//                item.getName(),
-//                item.getDescription(),
-//                item.getAvailable(),
-//                lastBooking != null ? ItemWithBookingsResponseDto.BookingDto.fromBooking(lastBooking) : null,
-//                nextBooking != null ? ItemWithBookingsResponseDto.BookingDto.fromBooking(nextBooking) : null,
-//                commentDtos);
     }
 
     public static Comment toComment(CommentRequestDto commentRequestDto, User user, Item item, LocalDateTime time) {
